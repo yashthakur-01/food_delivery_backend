@@ -12,12 +12,12 @@ async function register(req, res, next) {
 }
 
 /** POST /auth/verify-otp */
-async function verifyOtp(req, res, next) {
-  try {
-    await service.verifyOtp(req.body);
-    return success(res, 'Account verified successfully', null);
-  } catch (err) { next(err); }
-}
+// async function verifyOtp(req, res, next) {
+//   try {
+//     await service.verifyOtp(req.body);
+//     return success(res, 'Account verified successfully', null);
+//   } catch (err) { next(err); }
+// }
 
 /** POST /auth/login/password */
 async function loginWithPassword(req, res, next) {
@@ -60,4 +60,4 @@ async function logout(req, res, next) {
   } catch (err) { next(err); }
 }
 
-module.exports = { register, verifyOtp, loginWithPassword, requestLoginOtp, verifyLoginOtp, refresh, logout };
+module.exports = { register, /* verifyOtp, */ loginWithPassword, requestLoginOtp, verifyLoginOtp, refresh, logout };

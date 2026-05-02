@@ -118,53 +118,54 @@ describe('POST /api/auth/register', () => {
   });
 });
 
-describe('POST /api/auth/verify-otp', () => {
-  it('200 — correct OTP verifies user', async () => {
-    const phone = uniquePhone();
-    await registerUser({ phone });
+// DISABLED - OTP verification is now automatic on registration
+// describe('POST /api/auth/verify-otp', () => {
+//   it('200 — correct OTP verifies user', async () => {
+//     const phone = uniquePhone();
+//     await registerUser({ phone });
 
-    const otp = await getOtpFromRedis(phone);
-    expect(otp).toBeTruthy();
+//     const otp = await getOtpFromRedis(phone);
+//     expect(otp).toBeTruthy();
 
-    const res = await request(app)
-      .post('/api/auth/verify-otp')
-      .send({ identifier: phone, otp });
+//     const res = await request(app)
+//       .post('/api/auth/verify-otp')
+//       .send({ identifier: phone, otp });
 
-    expect(res.status).toBe(200);
-    expect(res.body.success).toBe(true);
+//     expect(res.status).toBe(200);
+//     expect(res.body.success).toBe(true);
 
-    // Verify user is now verified in DB
-    const user = await prisma.user.findFirst({ where: { phone } });
-    expect(user.is_verified).toBe(true);
-  });
+//     // Verify user is now verified in DB
+//     const user = await prisma.user.findFirst({ where: { phone } });
+//     expect(user.is_verified).toBe(true);
+//   });
 
-  it('400 — wrong OTP returns error', async () => {
-    const phone = uniquePhone();
-    await registerUser({ phone });
+//   it('400 — wrong OTP returns error', async () => {
+//     const phone = uniquePhone();
+//     await registerUser({ phone });
 
-    const res = await request(app)
-      .post('/api/auth/verify-otp')
-      .send({ identifier: phone, otp: '000000' });
+//     const res = await request(app)
+//       .post('/api/auth/verify-otp')
+//       .send({ identifier: phone, otp: '000000' });
 
-    expect(res.status).toBe(400);
-    expect(res.body.success).toBe(false);
-  });
+//     expect(res.status).toBe(400);
+//     expect(res.body.success).toBe(false);
+//   });
 
-  it('400 — expired OTP returns error', async () => {
-    const phone = uniquePhone();
-    await registerUser({ phone });
+//   it('400 — expired OTP returns error', async () => {
+//     const phone = uniquePhone();
+//     await registerUser({ phone });
 
-    // Delete the OTP from Redis to simulate expiry
-    await redis.del(`otp:${phone}`);
+//     // Delete the OTP from Redis to simulate expiry
+//     await redis.del(`otp:${phone}`);
 
-    const res = await request(app)
-      .post('/api/auth/verify-otp')
-      .send({ identifier: phone, otp: '123456' });
+//     const res = await request(app)
+//       .post('/api/auth/verify-otp')
+//       .send({ identifier: phone, otp: '123456' });
 
-    expect(res.status).toBe(400);
-    expect(res.body.success).toBe(false);
-  });
-});
+//     expect(res.status).toBe(400);
+//     expect(res.body.success).toBe(false);
+//   });
+// });
 
 describe('POST /api/auth/login/password', () => {
   it('200 — returns accessToken and refreshToken', async () => {
@@ -172,9 +173,9 @@ describe('POST /api/auth/login/password', () => {
     const password = 'Password123!';
     await registerUser({ phone, password });
 
-    // Verify the user first
-    const otp = await getOtpFromRedis(phone);
-    await request(app).post('/api/auth/verify-otp').send({ identifier: phone, otp });
+    // User is now auto-verified on registration
+    // const otp = await getOtpFromRedis(phone);
+    // await request(app).post('/api/auth/verify-otp').send({ identifier: phone, otp });
 
     const res = await request(app)
       .post('/api/auth/login/password')
@@ -189,8 +190,9 @@ describe('POST /api/auth/login/password', () => {
   it('401 — wrong password returns unauthorized', async () => {
     const phone = uniquePhone();
     await registerUser({ phone });
-    const otp = await getOtpFromRedis(phone);
-    await request(app).post('/api/auth/verify-otp').send({ identifier: phone, otp });
+    // User is now auto-verified on registration
+    // const otp = await getOtpFromRedis(phone);
+    // await request(app).post('/api/auth/verify-otp').send({ identifier: phone, otp });
 
     const res = await request(app)
       .post('/api/auth/login/password')
@@ -203,8 +205,9 @@ describe('POST /api/auth/login/password', () => {
   it('403 — role mismatch returns forbidden', async () => {
     const phone = uniquePhone();
     await registerUser({ phone, role: 'customer' });
-    const otp = await getOtpFromRedis(phone);
-    await request(app).post('/api/auth/verify-otp').send({ identifier: phone, otp });
+    // User is now auto-verified on registration
+    // const otp = await getOtpFromRedis(phone);
+    // await request(app).post('/api/auth/verify-otp').send({ identifier: phone, otp });
 
     const res = await request(app)
       .post('/api/auth/login/password')
@@ -217,7 +220,10 @@ describe('POST /api/auth/login/password', () => {
   it('403 — unverified user blocked from login', async () => {
     const phone = uniquePhone();
     await registerUser({ phone });
-    // Do NOT verify OTP — user remains unverified
+    
+    // Manually set user as unverified to test this scenario
+    const user = await prisma.user.findFirst({ where: { phone } });
+    await prisma.user.update({ where: { id: user.id }, data: { is_verified: false } });
 
     const res = await request(app)
       .post('/api/auth/login/password')
@@ -241,8 +247,9 @@ describe('POST /api/auth/login/otp/request', () => {
   it('200 — sends OTP for existing user', async () => {
     const phone = uniquePhone();
     await registerUser({ phone });
-    const regOtp = await getOtpFromRedis(phone);
-    await request(app).post('/api/auth/verify-otp').send({ identifier: phone, otp: regOtp });
+    // User is now auto-verified on registration
+    // const regOtp = await getOtpFromRedis(phone);
+    // await request(app).post('/api/auth/verify-otp').send({ identifier: phone, otp: regOtp });
 
     const res = await request(app)
       .post('/api/auth/login/otp/request')
@@ -278,8 +285,9 @@ describe('POST /api/auth/login/otp/verify', () => {
   it('200 — correct OTP returns tokens', async () => {
     const phone = uniquePhone();
     await registerUser({ phone });
-    const regOtp = await getOtpFromRedis(phone);
-    await request(app).post('/api/auth/verify-otp').send({ identifier: phone, otp: regOtp });
+    // User is now auto-verified on registration
+    // const regOtp = await getOtpFromRedis(phone);
+    // await request(app).post('/api/auth/verify-otp').send({ identifier: phone, otp: regOtp });
 
     // Request login OTP
     await request(app)
@@ -301,8 +309,9 @@ describe('POST /api/auth/login/otp/verify', () => {
   it('400 — wrong OTP returns error', async () => {
     const phone = uniquePhone();
     await registerUser({ phone });
-    const regOtp = await getOtpFromRedis(phone);
-    await request(app).post('/api/auth/verify-otp').send({ identifier: phone, otp: regOtp });
+    // User is now auto-verified on registration
+    // const regOtp = await getOtpFromRedis(phone);
+    // await request(app).post('/api/auth/verify-otp').send({ identifier: phone, otp: regOtp });
 
     await request(app)
       .post('/api/auth/login/otp/request')
@@ -321,8 +330,9 @@ describe('POST /api/auth/refresh', () => {
   it('200 — valid refreshToken returns new accessToken', async () => {
     const phone = uniquePhone();
     await registerUser({ phone });
-    const regOtp = await getOtpFromRedis(phone);
-    await request(app).post('/api/auth/verify-otp').send({ identifier: phone, otp: regOtp });
+    // User is now auto-verified on registration
+    // const regOtp = await getOtpFromRedis(phone);
+    // await request(app).post('/api/auth/verify-otp').send({ identifier: phone, otp: regOtp });
 
     const loginRes = await request(app)
       .post('/api/auth/login/password')
@@ -353,8 +363,9 @@ describe('POST /api/auth/logout', () => {
   it('200 — authenticated user can logout', async () => {
     const phone = uniquePhone();
     await registerUser({ phone });
-    const regOtp = await getOtpFromRedis(phone);
-    await request(app).post('/api/auth/verify-otp').send({ identifier: phone, otp: regOtp });
+    // User is now auto-verified on registration
+    // const regOtp = await getOtpFromRedis(phone);
+    // await request(app).post('/api/auth/verify-otp').send({ identifier: phone, otp: regOtp });
 
     const loginRes = await request(app)
       .post('/api/auth/login/password')

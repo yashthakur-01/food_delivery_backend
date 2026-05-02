@@ -1,8 +1,8 @@
 'use strict';
 
 module.exports = {
-  PENDING:  'pending',
-  SUCCESS:  'SUCCESS',
-  FAILED:   'FAILED',
-  REFUNDED: 'REFUNDED',
+  PENDING: 'pending',
+  PAID: 'paid',
+  FAILED: 'failed',
+  REFUNDED: 'refunded',
 };

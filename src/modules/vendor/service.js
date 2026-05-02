@@ -177,8 +177,11 @@ async function getProfile(ownerId) {
 }
 
 async function updateProfile(ownerId, data) {
-  const restaurant = await getOwnerRestaurant(ownerId);
-  return prisma.restaurant.update({ where: { id: restaurant.id }, data });
+  const existing = await prisma.restaurant.findFirst({ where: { ownerId } });
+  if (!existing) {
+    return prisma.restaurant.create({ data: { ownerId, address: 'N/A', name: 'My Restaurant', ...data } });
+  }
+  return prisma.restaurant.update({ where: { id: existing.id }, data });
 }
 
 async function toggleOpen(ownerId) {

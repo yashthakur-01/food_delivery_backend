@@ -47,28 +47,38 @@ async function register({ name, email, phone, password, role }) {
     select: { id: true, email: true, phone: true, role: true },
   });
 
-  const identifier = email || phone;
-  const otp = generateOTP();
-  await storeOTP(identifier, otp);
-  if (process.env.NODE_ENV !== 'test') {
-    console.info(`[OTP] ${identifier} → ${otp}`);
-  }
+  // Auto-verify user on registration (OTP verification disabled)
+  await prisma.user.update({ 
+    where: { id: user.id }, 
+    data: { is_verified: true } 
+  });
 
-  return user;
+  // const identifier = email || phone;
+  // const otp = generateOTP();
+  // await storeOTP(identifier, otp);
+  // if (process.env.NODE_ENV !== 'test') {
+  //   console.log('\n========================================');
+  //   console.log(`  OTP for ${identifier}`);
+  //   console.log(`  CODE: ${otp}`);
+  //   console.log('========================================\n');
+  // }
+
+  return { ...user, is_verified: true };
 }
 
 /**
  * Verify OTP after registration and mark user as verified.
+ * DISABLED - Users are now auto-verified on registration
  */
-async function verifyOtp({ identifier, otp }) {
-  const valid = await verifyOTP(identifier, otp);
-  if (!valid) throw new AppError(400, 'BAD_REQUEST', 'Invalid or expired OTP');
+// async function verifyOtp({ identifier, otp }) {
+//   const valid = await verifyOTP(identifier, otp);
+//   if (!valid) throw new AppError(400, 'BAD_REQUEST', 'Invalid or expired OTP');
 
-  const user = await findUserByIdentifier(identifier);
-  if (!user) throw new AppError(404, 'NOT_FOUND', 'User not found');
+//   const user = await findUserByIdentifier(identifier);
+//   if (!user) throw new AppError(404, 'NOT_FOUND', 'User not found');
 
-  await prisma.user.update({ where: { id: user.id }, data: { is_verified: true } });
-}
+//   await prisma.user.update({ where: { id: user.id }, data: { is_verified: true } });
+// }
 
 /**
  * Issue tokens for a verified, authenticated user.
@@ -122,7 +132,10 @@ async function requestLoginOtp({ identifier, role }) {
   const otp = generateOTP();
   await storeOTP(identifier, otp);
   if (process.env.NODE_ENV !== 'test') {
-    console.info(`[OTP] ${identifier} → ${otp}`);
+    console.log('\n========================================');
+    console.log(`  OTP for ${identifier}`);
+    console.log(`  CODE: ${otp}`);
+    console.log('========================================\n');
   }
 }
 
@@ -195,7 +208,7 @@ async function logout({ userId, tokenId }) {
 
 module.exports = {
   register,
-  verifyOtp,
+  // verifyOtp,
   loginWithPassword,
   requestLoginOtp,
   verifyLoginOtp,

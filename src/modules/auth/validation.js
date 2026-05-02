@@ -15,10 +15,11 @@ const registerSchema = Joi.object({
 }).or('email', 'phone'); // at least one identifier required
 
 // Verify OTP after registration (phone or email)
-const verifyOtpSchema = Joi.object({
-  identifier: Joi.string().trim().required(), // phone or email
-  otp:        Joi.string().pattern(/^\d{6}$/).required(),
-});
+// DISABLED - Users are now auto-verified on registration
+// const verifyOtpSchema = Joi.object({
+//   identifier: Joi.string().trim().required(), // phone or email
+//   otp:        Joi.string().pattern(/^\d{6}$/).required(),
+// });
 
 // Password-based login — identifier is phone or email
 const loginPasswordSchema = Joi.object({
@@ -48,7 +49,7 @@ const logoutSchema = Joi.object();
 
 module.exports = {
   registerSchema,
-  verifyOtpSchema,
+  // verifyOtpSchema,
   loginPasswordSchema,
   loginOtpRequestSchema,
   loginOtpVerifySchema,

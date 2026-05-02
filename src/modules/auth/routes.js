@@ -4,7 +4,7 @@ const { Router } = require('express');
 const controller = require('./controller');
 const {
   registerSchema,
-  verifyOtpSchema,
+  // verifyOtpSchema,
   loginPasswordSchema,
   loginOtpRequestSchema,
   loginOtpVerifySchema,
@@ -19,7 +19,7 @@ const router = Router();
 
 // Registration & verification
 router.post('/register',           rateLimiter, validate(registerSchema),         controller.register);
-router.post('/verify-otp',         rateLimiter, validate(verifyOtpSchema),         controller.verifyOtp);
+// router.post('/verify-otp',         rateLimiter, validate(verifyOtpSchema),         controller.verifyOtp);
 
 // Password login
 router.post('/login/password',     rateLimiter, validate(loginPasswordSchema),     controller.loginWithPassword);

@@ -66,8 +66,9 @@ async function registerAndVerify(phone, password = 'Password123!', role = 'custo
     .post('/api/auth/register')
     .send({ name: 'PBT User', phone, password, role });
   if (regRes.status !== 201) throw new Error(`Register failed: ${JSON.stringify(regRes.body)}`);
-  const otp = await redis.get(`otp:${phone}`);
-  await request(app).post('/api/auth/verify-otp').send({ identifier: phone, otp });
+  // User is now auto-verified on registration
+  // const otp = await redis.get(`otp:${phone}`);
+  // await request(app).post('/api/auth/verify-otp').send({ identifier: phone, otp });
   return regRes.body.data;
 }
 
@@ -79,9 +80,9 @@ async function loginAndGetTokens(phone, password = 'Password123!', role = 'custo
   return loginRes.body.data;
 }
 
-// ─── Property 1: Registration always creates is_verified=false, status=active ─
-// **Validates: Requirements 1.1**
-describe('Property 1: Registration always creates is_verified=false, status=active', () => {
+// ─── Property 1: Registration always creates is_verified=true, status=active ─
+// **Validates: Requirements 1.1** (Updated: users are now auto-verified)
+describe('Property 1: Registration always creates is_verified=true, status=active', () => {
   it('holds for any valid role', async () => {
     await fc.assert(
       fc.asyncProperty(
@@ -92,9 +93,9 @@ describe('Property 1: Registration always creates is_verified=false, status=acti
             .post('/api/auth/register')
             .send({ name: 'Test User', phone, password: 'Password123!', role });
           expect(res.status).toBe(201);
-          // Verify in DB
+          // Verify in DB - users are now auto-verified
           const user = await prisma.user.findFirst({ where: { phone } });
-          expect(user.is_verified).toBe(false);
+          expect(user.is_verified).toBe(true);
           expect(user.status).toBe('active');
         }
       ),
@@ -149,124 +150,125 @@ describe('Property 2: Duplicate email or phone always returns 409', () => {
 
 // ─── Property 3: OTP round-trip ───────────────────────────────────────────────
 // **Validates: Requirements 1.3, 1.4, 1.5**
-describe('Property 3: OTP round-trip — register stores OTP, verify-otp marks verified', () => {
-  it('holds for phone-based registration', async () => {
-    await fc.assert(
-      fc.asyncProperty(
-        fc.constant(null),
-        async () => {
-          const phone = uniquePhone();
-          await request(app)
-            .post('/api/auth/register')
-            .send({ name: 'OTP User', phone, password: 'Password123!', role: 'customer' });
+// DISABLED - Users are now auto-verified on registration
+// describe('Property 3: OTP round-trip — register stores OTP, verify-otp marks verified', () => {
+//   it('holds for phone-based registration', async () => {
+//     await fc.assert(
+//       fc.asyncProperty(
+//         fc.constant(null),
+//         async () => {
+//           const phone = uniquePhone();
+//           await request(app)
+//             .post('/api/auth/register')
+//             .send({ name: 'OTP User', phone, password: 'Password123!', role: 'customer' });
 
-          // OTP must be stored in Redis as a 6-digit string
-          const otp = await redis.get(`otp:${phone}`);
-          expect(otp).toBeTruthy();
-          expect(otp).toMatch(/^\d{6}$/);
+//           // OTP must be stored in Redis as a 6-digit string
+//           const otp = await redis.get(`otp:${phone}`);
+//           expect(otp).toBeTruthy();
+//           expect(otp).toMatch(/^\d{6}$/);
 
-          // Verify with the correct OTP
-          const verifyRes = await request(app)
-            .post('/api/auth/verify-otp')
-            .send({ identifier: phone, otp });
-          expect(verifyRes.status).toBe(200);
+//           // Verify with the correct OTP
+//           const verifyRes = await request(app)
+//             .post('/api/auth/verify-otp')
+//             .send({ identifier: phone, otp });
+//           expect(verifyRes.status).toBe(200);
 
-          // User must now be verified in DB
-          const user = await prisma.user.findFirst({ where: { phone } });
-          expect(user.is_verified).toBe(true);
+//           // User must now be verified in DB
+//           const user = await prisma.user.findFirst({ where: { phone } });
+//           expect(user.is_verified).toBe(true);
 
-          // OTP must be consumed (deleted from Redis) after successful verification
-          const otpAfter = await redis.get(`otp:${phone}`);
-          expect(otpAfter).toBeNull();
-        }
-      ),
-      { numRuns: 5 }
-    );
-  });
+//           // OTP must be consumed (deleted from Redis) after successful verification
+//           const otpAfter = await redis.get(`otp:${phone}`);
+//           expect(otpAfter).toBeNull();
+//         }
+//       ),
+//       { numRuns: 5 }
+//     );
+//   });
 
-  it('holds for email-based registration', async () => {
-    await fc.assert(
-      fc.asyncProperty(
-        fc.constant(null),
-        async () => {
-          const email = uniqueEmail();
-          await request(app)
-            .post('/api/auth/register')
-            .send({ name: 'OTP Email User', email, password: 'Password123!', role: 'customer' });
+//   it('holds for email-based registration', async () => {
+//     await fc.assert(
+//       fc.asyncProperty(
+//         fc.constant(null),
+//         async () => {
+//           const email = uniqueEmail();
+//           await request(app)
+//             .post('/api/auth/register')
+//             .send({ name: 'OTP Email User', email, password: 'Password123!', role: 'customer' });
 
-          // OTP must be stored in Redis keyed by email
-          const otp = await redis.get(`otp:${email}`);
-          expect(otp).toBeTruthy();
-          expect(otp).toMatch(/^\d{6}$/);
+//           // OTP must be stored in Redis keyed by email
+//           const otp = await redis.get(`otp:${email}`);
+//           expect(otp).toBeTruthy();
+//           expect(otp).toMatch(/^\d{6}$/);
 
-          // Verify with the correct OTP
-          const verifyRes = await request(app)
-            .post('/api/auth/verify-otp')
-            .send({ identifier: email, otp });
-          expect(verifyRes.status).toBe(200);
+//           // Verify with the correct OTP
+//           const verifyRes = await request(app)
+//             .post('/api/auth/verify-otp')
+//             .send({ identifier: email, otp });
+//           expect(verifyRes.status).toBe(200);
 
-          // User must now be verified in DB
-          const user = await prisma.user.findFirst({ where: { email } });
-          expect(user.is_verified).toBe(true);
+//           // User must now be verified in DB
+//           const user = await prisma.user.findFirst({ where: { email } });
+//           expect(user.is_verified).toBe(true);
 
-          // OTP must be consumed after use
-          const otpAfter = await redis.get(`otp:${email}`);
-          expect(otpAfter).toBeNull();
-        }
-      ),
-      { numRuns: 5 }
-    );
-  });
+//           // OTP must be consumed after use
+//           const otpAfter = await redis.get(`otp:${email}`);
+//           expect(otpAfter).toBeNull();
+//         }
+//       ),
+//       { numRuns: 5 }
+//     );
+//   });
 
-  it('invalid OTP always returns 400 (Requirement 1.5)', async () => {
-    await fc.assert(
-      fc.asyncProperty(
-        // Generate a wrong OTP that is a 6-digit string but different from the real one
-        fc.integer({ min: 100000, max: 999999 }),
-        async (wrongOtpNum) => {
-          const phone = uniquePhone();
-          await request(app)
-            .post('/api/auth/register')
-            .send({ name: 'OTP User', phone, password: 'Password123!', role: 'customer' });
+//   it('invalid OTP always returns 400 (Requirement 1.5)', async () => {
+//     await fc.assert(
+//       fc.asyncProperty(
+//         // Generate a wrong OTP that is a 6-digit string but different from the real one
+//         fc.integer({ min: 100000, max: 999999 }),
+//         async (wrongOtpNum) => {
+//           const phone = uniquePhone();
+//           await request(app)
+//             .post('/api/auth/register')
+//             .send({ name: 'OTP User', phone, password: 'Password123!', role: 'customer' });
 
-          const realOtp = await redis.get(`otp:${phone}`);
-          const wrongOtp = String(wrongOtpNum === Number(realOtp)
-            ? (wrongOtpNum === 999999 ? 100000 : wrongOtpNum + 1)
-            : wrongOtpNum);
+//           const realOtp = await redis.get(`otp:${phone}`);
+//           const wrongOtp = String(wrongOtpNum === Number(realOtp)
+//             ? (wrongOtpNum === 999999 ? 100000 : wrongOtpNum + 1)
+//             : wrongOtpNum);
 
-          const res = await request(app)
-            .post('/api/auth/verify-otp')
-            .send({ identifier: phone, otp: wrongOtp });
-          expect(res.status).toBe(400);
-          expect(res.body.success).toBe(false);
+//           const res = await request(app)
+//             .post('/api/auth/verify-otp')
+//             .send({ identifier: phone, otp: wrongOtp });
+//           expect(res.status).toBe(400);
+//           expect(res.body.success).toBe(false);
 
-          // User must remain unverified
-          const user = await prisma.user.findFirst({ where: { phone } });
-          expect(user.is_verified).toBe(false);
-        }
-      ),
-      { numRuns: 5 }
-    );
-  });
+//           // User must remain unverified
+//           const user = await prisma.user.findFirst({ where: { phone } });
+//           expect(user.is_verified).toBe(false);
+//         }
+//       ),
+//       { numRuns: 5 }
+//     );
+//   });
 
-  it('OTP for non-existent identifier always returns 400', async () => {
-    await fc.assert(
-      fc.asyncProperty(
-        fc.constant(null),
-        async () => {
-          const phone = uniquePhone();
-          // Never registered — no OTP in Redis
-          const res = await request(app)
-            .post('/api/auth/verify-otp')
-            .send({ identifier: phone, otp: '123456' });
-          expect(res.status).toBe(400);
-          expect(res.body.success).toBe(false);
-        }
-      ),
-      { numRuns: 5 }
-    );
-  });
-});
+//   it('OTP for non-existent identifier always returns 400', async () => {
+//     await fc.assert(
+//       fc.asyncProperty(
+//         fc.constant(null),
+//         async () => {
+//           const phone = uniquePhone();
+//           // Never registered — no OTP in Redis
+//           const res = await request(app)
+//             .post('/api/auth/verify-otp')
+//             .send({ identifier: phone, otp: '123456' });
+//           expect(res.status).toBe(400);
+//           expect(res.body.success).toBe(false);
+//         }
+//       ),
+//       { numRuns: 5 }
+//     );
+//   });
+// });
 
 // ─── Property 4: Unverified user always blocked ───────────────────────────────
 // **Validates: Requirements 1.6, 2.5**
@@ -394,8 +396,9 @@ describe('Property 5: Login JWT always contains correct claims', () => {
             .post('/api/auth/register')
             .send({ name: 'PBT Email User', email, password: 'Password123!', role });
           expect(regRes.status).toBe(201);
-          const otp = await redis.get(`otp:${email}`);
-          await request(app).post('/api/auth/verify-otp').send({ identifier: email, otp });
+          // User is now auto-verified on registration
+          // const otp = await redis.get(`otp:${email}`);
+          // await request(app).post('/api/auth/verify-otp').send({ identifier: email, otp });
 
           const loginRes = await request(app)
             .post('/api/auth/login/password')

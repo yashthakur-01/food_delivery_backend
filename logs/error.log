@@ -3552,3 +3552,190 @@ Unknown argument `expires_at`. Did you mean `expiresAt`? Available options are m
     at next (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\route.js:157:13)
     at rateLimiter (C:\Users\LENOVO\Delivery_App\Backend\src\common\middleware\rateLimiter.js:23:5)
     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-20T16:16:56.046Z [ERROR]: PrismaClientKnownRequestError: 
+Invalid `prisma.oTP.deleteMany()` invocation in
+C:\Users\LENOVO\Delivery_App\Backend\src\jobs\otpCleanup.js:8:37
+
+  5 
+  6 async function cleanupExpiredOtps() {
+  7   try {
+→ 8     const result = await prisma.oTP.deleteMany(
+Raw query failed. Code: `unknown`. Message: `Kind: Server selection timeout: No available servers. Topology: { Type: ReplicaSetNoPrimary, Set Name: atlas-lrheei-shard-0, Max Set Version: 56, Max Election ID: 7fffffff00000000000000af, Servers: [ { Address: ac-3tiszhz-shard-00-00.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None }, { Address: ac-3tiszhz-shard-00-02.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None }, { Address: ac-3tiszhz-shard-00-01.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None } ] }, labels: {"TransientTransactionError"}, source: None`
+    at ei.handleRequestError (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:7268)
+    at ei.handleAndLogRequestError (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async Timeout.cleanupExpiredOtps [as _onTimeout] (C:\Users\LENOVO\Delivery_App\Backend\src\jobs\otpCleanup.js:8:20)
+2026-04-20T16:26:55.952Z [ERROR]: PrismaClientKnownRequestError: 
+Invalid `prisma.oTP.deleteMany()` invocation in
+C:\Users\LENOVO\Delivery_App\Backend\src\jobs\otpCleanup.js:8:37
+
+  5 
+  6 async function cleanupExpiredOtps() {
+  7   try {
+→ 8     const result = await prisma.oTP.deleteMany(
+Raw query failed. Code: `unknown`. Message: `Kind: Server selection timeout: No available servers. Topology: { Type: ReplicaSetNoPrimary, Set Name: atlas-lrheei-shard-0, Max Set Version: 56, Max Election ID: 7fffffff00000000000000af, Servers: [ { Address: ac-3tiszhz-shard-00-00.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None }, { Address: ac-3tiszhz-shard-00-02.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None }, { Address: ac-3tiszhz-shard-00-01.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None } ] }, labels: {"TransientTransactionError"}, source: None`
+    at ei.handleRequestError (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:7268)
+    at ei.handleAndLogRequestError (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async Timeout.cleanupExpiredOtps [as _onTimeout] (C:\Users\LENOVO\Delivery_App\Backend\src\jobs\otpCleanup.js:8:20)
+2026-04-22T08:50:37.413Z [ERROR]: PrismaClientKnownRequestError: 
+Invalid `prisma.oTP.deleteMany()` invocation in
+C:\Users\LENOVO\Delivery_App\Backend\src\jobs\otpCleanup.js:8:37
+
+  5 
+  6 async function cleanupExpiredOtps() {
+  7   try {
+→ 8     const result = await prisma.oTP.deleteMany(
+Raw query failed. Code: `unknown`. Message: `Kind: Server selection timeout: No available servers. Topology: { Type: ReplicaSetNoPrimary, Set Name: atlas-lrheei-shard-0, Max Set Version: 56, Max Election ID: 7fffffff00000000000000af, Servers: [ { Address: ac-3tiszhz-shard-00-00.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None }, { Address: ac-3tiszhz-shard-00-02.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None }, { Address: ac-3tiszhz-shard-00-01.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None } ] }, labels: {"TransientTransactionError"}, source: None`
+    at ei.handleRequestError (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:7268)
+    at ei.handleAndLogRequestError (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async Timeout.cleanupExpiredOtps [as _onTimeout] (C:\Users\LENOVO\Delivery_App\Backend\src\jobs\otpCleanup.js:8:20)
+2026-04-22T09:00:37.376Z [ERROR]: PrismaClientKnownRequestError: 
+Invalid `prisma.oTP.deleteMany()` invocation in
+C:\Users\LENOVO\Delivery_App\Backend\src\jobs\otpCleanup.js:8:37
+
+  5 
+  6 async function cleanupExpiredOtps() {
+  7   try {
+→ 8     const result = await prisma.oTP.deleteMany(
+Raw query failed. Code: `unknown`. Message: `Kind: Server selection timeout: No available servers. Topology: { Type: ReplicaSetNoPrimary, Set Name: atlas-lrheei-shard-0, Max Set Version: 56, Max Election ID: 7fffffff00000000000000af, Servers: [ { Address: ac-3tiszhz-shard-00-00.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None }, { Address: ac-3tiszhz-shard-00-02.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None }, { Address: ac-3tiszhz-shard-00-01.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None } ] }, labels: {"TransientTransactionError"}, source: None`
+    at ei.handleRequestError (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:7268)
+    at ei.handleAndLogRequestError (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async Timeout.cleanupExpiredOtps [as _onTimeout] (C:\Users\LENOVO\Delivery_App\Backend\src\jobs\otpCleanup.js:8:20)
+2026-04-24T09:29:43.829Z [ERROR]: PrismaClientKnownRequestError: 
+Invalid `prisma.oTP.deleteMany()` invocation in
+C:\Users\LENOVO\Delivery_App\Backend\src\jobs\otpCleanup.js:8:37
+
+  5 
+  6 async function cleanupExpiredOtps() {
+  7   try {
+→ 8     const result = await prisma.oTP.deleteMany(
+Raw query failed. Code: `unknown`. Message: `Kind: Server selection timeout: No available servers. Topology: { Type: ReplicaSetNoPrimary, Set Name: atlas-lrheei-shard-0, Max Set Version: 56, Max Election ID: 7fffffff00000000000000b0, Servers: [ { Address: ac-3tiszhz-shard-00-02.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None }, { Address: ac-3tiszhz-shard-00-01.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None }, { Address: ac-3tiszhz-shard-00-00.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None } ] }, labels: {"TransientTransactionError"}, source: None`
+    at ei.handleRequestError (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:7268)
+    at ei.handleAndLogRequestError (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async Timeout.cleanupExpiredOtps [as _onTimeout] (C:\Users\LENOVO\Delivery_App\Backend\src\jobs\otpCleanup.js:8:20)
+2026-04-24T11:30:44.821Z [ERROR]: TypeError: Cannot destructure property 'identifier' of 'undefined' as it is undefined.
+    at Object.loginWithPassword (C:\Users\LENOVO\Delivery_App\Backend\src\modules\auth\service.js:103:36)
+    at loginWithPassword (C:\Users\LENOVO\Delivery_App\Backend\src\modules\auth\controller.js:25:34)
+    at Layer.handleRequest (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\route.js:157:13)
+    at C:\Users\LENOVO\Delivery_App\Backend\src\common\middleware\validate.js:16:7
+    at Layer.handleRequest (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\route.js:157:13)
+    at rateLimiter (C:\Users\LENOVO\Delivery_App\Backend\src\common\middleware\rateLimiter.js:23:5)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-24T11:32:34.203Z [ERROR]: TypeError: Cannot destructure property 'identifier' of 'undefined' as it is undefined.
+    at Object.loginWithPassword (C:\Users\LENOVO\Delivery_App\Backend\src\modules\auth\service.js:103:36)
+    at loginWithPassword (C:\Users\LENOVO\Delivery_App\Backend\src\modules\auth\controller.js:25:34)
+    at Layer.handleRequest (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\route.js:157:13)
+    at C:\Users\LENOVO\Delivery_App\Backend\src\common\middleware\validate.js:16:7
+    at Layer.handleRequest (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\route.js:157:13)
+    at rateLimiter (C:\Users\LENOVO\Delivery_App\Backend\src\common\middleware\rateLimiter.js:23:5)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-24T11:32:42.232Z [ERROR]: TypeError: Cannot destructure property 'identifier' of 'undefined' as it is undefined.
+    at Object.loginWithPassword (C:\Users\LENOVO\Delivery_App\Backend\src\modules\auth\service.js:103:36)
+    at loginWithPassword (C:\Users\LENOVO\Delivery_App\Backend\src\modules\auth\controller.js:25:34)
+    at Layer.handleRequest (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\route.js:157:13)
+    at C:\Users\LENOVO\Delivery_App\Backend\src\common\middleware\validate.js:16:7
+    at Layer.handleRequest (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\route.js:157:13)
+    at rateLimiter (C:\Users\LENOVO\Delivery_App\Backend\src\common\middleware\rateLimiter.js:23:5)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-24T11:37:31.097Z [ERROR]: PrismaClientKnownRequestError: 
+Invalid `prisma.user.create()` invocation in
+C:\Users\LENOVO\Delivery_App\Backend\src\modules\auth\service.js:37:34
+
+  34 }
+  35 
+  36 const hashed = await bcrypt.hash(password, 10);
+→ 37 const user = await prisma.user.create(
+Unique constraint failed on the constraint: `User_phone_key`
+    at ei.handleRequestError (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:7268)
+    at ei.handleAndLogRequestError (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async Object.register (C:\Users\LENOVO\Delivery_App\Backend\src\modules\auth\service.js:37:16)
+    at async register (C:\Users\LENOVO\Delivery_App\Backend\src\modules\auth\controller.js:9:18)
+2026-04-24T11:55:09.954Z [ERROR]: TypeError: Cannot destructure property 'identifier' of 'undefined' as it is undefined.
+    at Object.verifyOtp (C:\Users\LENOVO\Delivery_App\Backend\src\modules\auth\service.js:63:28)
+    at verifyOtp (C:\Users\LENOVO\Delivery_App\Backend\src\modules\auth\controller.js:17:19)
+    at Layer.handleRequest (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\route.js:157:13)
+    at C:\Users\LENOVO\Delivery_App\Backend\src\common\middleware\validate.js:16:7
+    at Layer.handleRequest (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\route.js:157:13)
+    at rateLimiter (C:\Users\LENOVO\Delivery_App\Backend\src\common\middleware\rateLimiter.js:23:5)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-24T12:17:50.739Z [ERROR]: PrismaClientKnownRequestError: 
+Invalid `prisma.oTP.deleteMany()` invocation in
+C:\Users\LENOVO\Delivery_App\Backend\src\jobs\otpCleanup.js:8:37
+
+  5 
+  6 async function cleanupExpiredOtps() {
+  7   try {
+→ 8     const result = await prisma.oTP.deleteMany(
+Raw query failed. Code: `unknown`. Message: `Kind: Server selection timeout: No available servers. Topology: { Type: ReplicaSetNoPrimary, Set Name: atlas-lrheei-shard-0, Max Set Version: 56, Max Election ID: 7fffffff00000000000000b0, Servers: [ { Address: ac-3tiszhz-shard-00-00.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None }, { Address: ac-3tiszhz-shard-00-02.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None }, { Address: ac-3tiszhz-shard-00-01.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None } ] }, labels: {"TransientTransactionError"}, source: None`
+    at ei.handleRequestError (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:7268)
+    at ei.handleAndLogRequestError (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async Timeout.cleanupExpiredOtps [as _onTimeout] (C:\Users\LENOVO\Delivery_App\Backend\src\jobs\otpCleanup.js:8:20)
+2026-04-24T12:27:50.656Z [ERROR]: PrismaClientKnownRequestError: 
+Invalid `prisma.oTP.deleteMany()` invocation in
+C:\Users\LENOVO\Delivery_App\Backend\src\jobs\otpCleanup.js:8:37
+
+  5 
+  6 async function cleanupExpiredOtps() {
+  7   try {
+→ 8     const result = await prisma.oTP.deleteMany(
+Raw query failed. Code: `unknown`. Message: `Kind: Server selection timeout: No available servers. Topology: { Type: ReplicaSetNoPrimary, Set Name: atlas-lrheei-shard-0, Max Set Version: 56, Max Election ID: 7fffffff00000000000000b0, Servers: [ { Address: ac-3tiszhz-shard-00-00.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None }, { Address: ac-3tiszhz-shard-00-02.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None }, { Address: ac-3tiszhz-shard-00-01.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None } ] }, labels: {"TransientTransactionError"}, source: None`
+    at ei.handleRequestError (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:7268)
+    at ei.handleAndLogRequestError (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async Timeout.cleanupExpiredOtps [as _onTimeout] (C:\Users\LENOVO\Delivery_App\Backend\src\jobs\otpCleanup.js:8:20)
+2026-04-24T12:35:13.963Z [ERROR]: TypeError: Cannot destructure property 'name' of 'undefined' as it is undefined.
+    at Object.register (C:\Users\LENOVO\Delivery_App\Backend\src\modules\auth\service.js:26:27)
+    at register (C:\Users\LENOVO\Delivery_App\Backend\src\modules\auth\controller.js:9:32)
+    at Layer.handleRequest (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\route.js:157:13)
+    at C:\Users\LENOVO\Delivery_App\Backend\src\common\middleware\validate.js:16:7
+    at Layer.handleRequest (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\route.js:157:13)
+    at rateLimiter (C:\Users\LENOVO\Delivery_App\Backend\src\common\middleware\rateLimiter.js:23:5)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-24T12:35:20.162Z [ERROR]: TypeError: Cannot destructure property 'name' of 'undefined' as it is undefined.
+    at Object.register (C:\Users\LENOVO\Delivery_App\Backend\src\modules\auth\service.js:26:27)
+    at register (C:\Users\LENOVO\Delivery_App\Backend\src\modules\auth\controller.js:9:32)
+    at Layer.handleRequest (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\route.js:157:13)
+    at C:\Users\LENOVO\Delivery_App\Backend\src\common\middleware\validate.js:16:7
+    at Layer.handleRequest (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\LENOVO\Delivery_App\Backend\node_modules\router\lib\route.js:157:13)
+    at rateLimiter (C:\Users\LENOVO\Delivery_App\Backend\src\common\middleware\rateLimiter.js:23:5)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-04-24T15:21:43.483Z [ERROR]: PrismaClientKnownRequestError: 
+Invalid `prisma.oTP.deleteMany()` invocation in
+C:\Users\LENOVO\Delivery_App\Backend\src\jobs\otpCleanup.js:8:37
+
+  5 
+  6 async function cleanupExpiredOtps() {
+  7   try {
+→ 8     const result = await prisma.oTP.deleteMany(
+Raw query failed. Code: `unknown`. Message: `Kind: Server selection timeout: No available servers. Topology: { Type: ReplicaSetNoPrimary, Set Name: atlas-lrheei-shard-0, Max Set Version: 56, Max Election ID: 7fffffff00000000000000b0, Servers: [ { Address: ac-3tiszhz-shard-00-00.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None }, { Address: ac-3tiszhz-shard-00-02.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None }, { Address: ac-3tiszhz-shard-00-01.74tccv0.mongodb.net:27017, Type: Unknown, Error: Kind: I/O error: No such host is known. (os error 11001), labels: {}, source: None } ] }, labels: {"TransientTransactionError"}, source: None`
+    at ei.handleRequestError (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:7268)
+    at ei.handleAndLogRequestError (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async Timeout.cleanupExpiredOtps [as _onTimeout] (C:\Users\LENOVO\Delivery_App\Backend\src\jobs\otpCleanup.js:8:20)

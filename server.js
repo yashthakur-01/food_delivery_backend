@@ -15,6 +15,7 @@ const { initSocket } = require("./src/sockets");
 
 const authRoutes = require("./src/modules/auth/routes");
 const userRoutes = require("./src/modules/user/routes");
+const restaurantRoutes = require("./src/modules/restaurant/routes");
 
 const app = express();
 const server = http.createServer(app);
@@ -65,6 +66,7 @@ app.get("/health", async (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/admin", adminRoutes);
