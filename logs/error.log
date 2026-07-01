@@ -3739,3 +3739,205 @@ Raw query failed. Code: `unknown`. Message: `Kind: Server selection timeout: No 
     at ei.request (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:121:6300)
     at async a (C:\Users\LENOVO\Delivery_App\Backend\node_modules\@prisma\client\runtime\library.js:130:9551)
     at async Timeout.cleanupExpiredOtps [as _onTimeout] (C:\Users\LENOVO\Delivery_App\Backend\src\jobs\otpCleanup.js:8:20)
+2026-06-24T16:10:26.629Z [ERROR]: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 20). Refer to "maxRetriesPerRequest" option for details.
+    at TLSSocket.<anonymous> (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\ioredis\built\redis\event_handler.js:207:37)
+    at Object.onceWrapper (node:events:634:26)
+    at TLSSocket.emit (node:events:531:35)
+    at node:net:346:12
+    at TCP.done (node:_tls_wrap:650:7)
+2026-06-24T16:16:54.194Z [ERROR]: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 20). Refer to "maxRetriesPerRequest" option for details.
+    at TLSSocket.<anonymous> (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\ioredis\built\redis\event_handler.js:207:37)
+    at Object.onceWrapper (node:events:634:26)
+    at TLSSocket.emit (node:events:531:35)
+    at node:net:346:12
+    at TCP.done (node:_tls_wrap:650:7)
+2026-06-24T16:27:32.311Z [ERROR]: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 20). Refer to "maxRetriesPerRequest" option for details.
+    at TLSSocket.<anonymous> (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\ioredis\built\redis\event_handler.js:207:37)
+    at Object.onceWrapper (node:events:634:26)
+    at TLSSocket.emit (node:events:531:35)
+    at node:net:346:12
+    at TCP.done (node:_tls_wrap:650:7)
+2026-06-24T16:28:14.456Z [ERROR]: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 20). Refer to "maxRetriesPerRequest" option for details.
+    at TLSSocket.<anonymous> (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\ioredis\built\redis\event_handler.js:207:37)
+    at Object.onceWrapper (node:events:634:26)
+    at TLSSocket.emit (node:events:531:35)
+    at node:net:346:12
+    at TCP.done (node:_tls_wrap:650:7)
+2026-06-24T17:52:10.215Z [ERROR]: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 1). Refer to "maxRetriesPerRequest" option for details.
+    at TLSSocket.<anonymous> (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\ioredis\built\redis\event_handler.js:207:37)
+    at Object.onceWrapper (node:events:634:26)
+    at TLSSocket.emit (node:events:531:35)
+    at node:net:346:12
+    at TCP.done (node:_tls_wrap:650:7)
+2026-06-24T17:54:31.524Z [ERROR]: MaxRetriesPerRequestError: Reached the max retries per request limit (which is 1). Refer to "maxRetriesPerRequest" option for details.
+    at TLSSocket.<anonymous> (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\ioredis\built\redis\event_handler.js:207:37)
+    at Object.onceWrapper (node:events:634:26)
+    at TLSSocket.emit (node:events:531:35)
+    at node:net:346:12
+    at TCP.done (node:_tls_wrap:650:7)
+2026-06-24T18:30:14.423Z [ERROR]: TypeError: Cannot destructure property 'name' of 'undefined' as it is undefined.
+    at Object.register (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\auth\service.js:26:27)
+    at register (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\auth\controller.js:9:32)
+    at Layer.handleRequest (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\route.js:157:13)
+    at C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\common\middleware\validate.js:16:7
+    at Layer.handleRequest (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\route.js:157:13)
+    at rateLimiter (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\common\middleware\rateLimiter.js:2:3)
+    at Layer.handleRequest (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\route.js:157:13)
+2026-06-24T18:30:33.873Z [ERROR]: TypeError: Cannot destructure property 'name' of 'undefined' as it is undefined.
+    at Object.register (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\auth\service.js:26:27)
+    at register (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\auth\controller.js:9:32)
+    at Layer.handleRequest (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\route.js:157:13)
+    at C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\common\middleware\validate.js:16:7
+    at Layer.handleRequest (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\route.js:157:13)
+    at rateLimiter (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\common\middleware\rateLimiter.js:2:3)
+    at Layer.handleRequest (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\route.js:157:13)
+2026-06-25T06:41:09.085Z [ERROR]: ReferenceError: token is not defined
+    at module.exports (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\common\middleware\authenticate.js:27:25)
+    at Layer.handleRequest (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\index.js:295:15
+    at processParams (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\index.js:582:12)
+    at next (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\index.js:291:5)
+    at Function.handle (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\index.js:186:3)
+2026-06-27T06:59:58.456Z [ERROR]: PrismaClientValidationError: 
+Invalid `prisma.restaurant.update()` invocation in
+C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\vendor\service.js:184:28
+
+  181 if (!existing) {
+  182   return prisma.restaurant.create({ data: { ownerId, address: 'N/A', name: 'My Restaurant', ...data } });
+  183 }
+→ 184 return prisma.restaurant.update({
+        where: {
+          id: "6a3cea1cc809de17f352dc87"
+        },
+      + data: RestaurantUpdateInput | RestaurantUncheckedUpdateInput
+      })
+
+Argument `data` is missing.
+    at Nn (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:29:1363)
+    at ei.handleRequestError (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:6911)
+    at ei.handleAndLogRequestError (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async updateProfile (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\vendor\controller.js:88:55)
+2026-06-27T07:00:18.020Z [ERROR]: PrismaClientValidationError: 
+Invalid `prisma.restaurant.update()` invocation in
+C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\vendor\service.js:184:28
+
+  181 if (!existing) {
+  182   return prisma.restaurant.create({ data: { ownerId, address: 'N/A', name: 'My Restaurant', ...data } });
+  183 }
+→ 184 return prisma.restaurant.update({
+        where: {
+          id: "6a3cea1cc809de17f352dc87"
+        },
+      + data: RestaurantUpdateInput | RestaurantUncheckedUpdateInput
+      })
+
+Argument `data` is missing.
+    at Nn (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:29:1363)
+    at ei.handleRequestError (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:6911)
+    at ei.handleAndLogRequestError (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async updateProfile (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\vendor\controller.js:88:55)
+2026-06-27T07:07:52.779Z [ERROR]: PrismaClientValidationError: 
+Invalid `prisma.restaurant.update()` invocation in
+C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\vendor\service.js:184:28
+
+  181 if (!existing) {
+  182   return prisma.restaurant.create({ data: { ownerId, address: 'N/A', name: 'My Restaurant', ...data } });
+  183 }
+→ 184 return prisma.restaurant.update({
+        where: {
+          id: "6a3cea1cc809de17f352dc87"
+        },
+      + data: RestaurantUpdateInput | RestaurantUncheckedUpdateInput
+      })
+
+Argument `data` is missing.
+    at Nn (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:29:1363)
+    at ei.handleRequestError (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:6911)
+    at ei.handleAndLogRequestError (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async updateProfile (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\vendor\controller.js:88:55)
+2026-06-29T07:38:54.962Z [ERROR]: PrismaClientValidationError: 
+Invalid `prisma.order.findUnique()` invocation in
+C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\payment\service.js:27:36
+
+  24  * Returns the payment record + Razorpay order details the client needs to open the SDK.
+  25  */
+  26 const createPayment = async ({ orderId, amount, method, userId }) => {
+→ 27   const order = await prisma.order.findUnique({
+         where: {
+           id: undefined,
+       ?   AND?: OrderWhereInput | OrderWhereInput[],
+       ?   OR?: OrderWhereInput[],
+       ?   NOT?: OrderWhereInput | OrderWhereInput[],
+       ?   orderNumber?: StringNullableFilter | String | Null,
+       ?   userId?: StringFilter | String,
+       ?   restaurantId?: StringFilter | String,
+       ?   status?: StringFilter | String,
+       ?   totalAmount?: FloatFilter | Float,
+       ?   deliveryAddress?: StringNullableFilter | String | Null,
+       ?   deliveryLat?: FloatNullableFilter | Float | Null,
+       ?   deliveryLng?: FloatNullableFilter | Float | Null,
+       ?   isDelayed?: BoolFilter | Boolean,
+       ?   createdAt?: DateTimeFilter | DateTime,
+       ?   updatedAt?: DateTimeFilter | DateTime,
+       ?   user?: UserScalarRelationFilter | UserWhereInput,
+       ?   restaurant?: RestaurantScalarRelationFilter | RestaurantWhereInput,
+       ?   items?: OrderItemListRelationFilter,
+       ?   payment?: PaymentNullableScalarRelationFilter | PaymentWhereInput | Null,
+       ?   tracking?: DeliveryTrackingNullableScalarRelationFilter | DeliveryTrackingWhereInput | Null
+         }
+       })
+
+Argument `where` of type OrderWhereUniqueInput needs at least one of `id` arguments. Available options are marked with ?.
+    at Nn (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:29:1363)
+    at ei.handleRequestError (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:6911)
+    at ei.handleAndLogRequestError (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async Object.createPayment (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\payment\service.js:27:17)
+    at async createPayment (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\payment\controller.js:8:20)
+2026-06-29T07:39:40.292Z [ERROR]: PrismaClientKnownRequestError: 
+Invalid `prisma.order.findUnique()` invocation in
+C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\payment\service.js:27:36
+
+  24  * Returns the payment record + Razorpay order details the client needs to open the SDK.
+  25  */
+  26 const createPayment = async ({ orderId, amount, method, userId }) => {
+→ 27   const order = await prisma.order.findUnique(
+Inconsistent column data: Malformed ObjectID: provided hex string representation must be exactly 12 bytes, instead got: "<your_order_id>", length 15.
+    at ei.handleRequestError (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:7268)
+    at ei.handleAndLogRequestError (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async Object.createPayment (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\payment\service.js:27:17)
+    at async createPayment (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\payment\controller.js:8:20)
+2026-06-29T07:39:45.950Z [ERROR]: PrismaClientKnownRequestError: 
+Invalid `prisma.order.findUnique()` invocation in
+C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\payment\service.js:27:36
+
+  24  * Returns the payment record + Razorpay order details the client needs to open the SDK.
+  25  */
+  26 const createPayment = async ({ orderId, amount, method, userId }) => {
+→ 27   const order = await prisma.order.findUnique(
+Inconsistent column data: Malformed ObjectID: provided hex string representation must be exactly 12 bytes, instead got: "<your_order_id>", length 15.
+    at ei.handleRequestError (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:7268)
+    at ei.handleAndLogRequestError (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async Object.createPayment (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\payment\service.js:27:17)
+    at async createPayment (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\payment\controller.js:8:20)

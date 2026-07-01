@@ -1,0 +1,9 @@
+$kind: http-request
+url: "{{base_url}}/api/delivery/6a4205b4a4411df64a0be0f1/accept"
+method: POST
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_1aa1}}
+body:
+  type: json
+  content: "{}"
+order: 9000

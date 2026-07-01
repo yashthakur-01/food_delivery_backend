@@ -1,0 +1,19 @@
+$kind: http-request
+url: "{{base_url}}/api/users/me"
+method: GET
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_1629}}
+body:
+  type: json
+  content: "{\r
+
+    \  \"name\": \"Admin\",\r
+
+    \  \"phone\": \"+919876543200\",\r
+
+    \  \"password\": \"Password123!\",\r
+
+    \  \"role\": \"customer\"\r
+
+    }"
+order: 1000

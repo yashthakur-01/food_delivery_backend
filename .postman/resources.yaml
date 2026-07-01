@@ -1,0 +1,7 @@
+workspace:
+  id: 020b91b3-8e35-4eb9-8a17-d32a33ca78ff
+cloudResources:
+  collections:
+    ../postman/collections/Food Delivery Backend: 56078698-37111df6-191d-426b-a855-cd130f38c691
+  environments:
+    ../postman/environments/Food Delivery.environment.yaml: 56078698-1358c825-2ba6-4b41-b1c8-bb6048ea34b2

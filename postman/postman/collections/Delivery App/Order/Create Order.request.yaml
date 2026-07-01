@@ -1,0 +1,28 @@
+$kind: http-request
+url: "{{base_url}}/api/orders"
+method: POST
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_0adf}}
+  Content-Type: application/json
+body:
+  type: json
+  content: "{\r
+
+    \  \"restaurant_id\": \"6a3cea1cc809de17f352dc87\",\r
+
+    \  \"address_id\": \"6a3d706c99f8c2487d8bf7d2\",\r
+
+    \  \"items\": [\r
+
+    \    {\r
+
+    \      \"menu_item_id\": \"6a3cedf2c809de17f352dc89\",\r
+
+    \      \"quantity\": 2\r
+
+    \    }\r
+
+    \  ]\r
+
+    }"
+order: 1000

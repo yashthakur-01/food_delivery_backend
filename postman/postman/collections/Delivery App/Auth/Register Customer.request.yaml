@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{base_url}}/api/auth/register"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"name\": \"Customer One\",\r
+
+    \  \"phone\": \"+919876543204\",\r
+
+    \  \"password\": \"Password123!\",\r
+
+    \  \"role\": \"customer\"\r
+
+    }"
+order: 5000

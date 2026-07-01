@@ -1,0 +1,18 @@
+owner: "56266245"
+team: "20246359"
+lastUpdatedBy: "56266245"
+lastRevision: 1782922885000
+name: Food Delivery
+color: null
+values:
+  - key: base_url
+    value: ""
+    enabled: true
+  - key: access_token
+    value: ""
+    enabled: true
+  - key: refresh_token
+    value: ""
+    enabled: true
+createdAt: 2026-07-01T16:03:22.000Z
+updatedAt: 2026-07-01T16:21:25.000Z

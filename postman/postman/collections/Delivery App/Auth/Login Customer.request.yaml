@@ -1,0 +1,43 @@
+$kind: http-request
+url: "{{base_url}}/api/auth/login/password"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"identifier\": \"+919876543204\",\r
+
+    \  \"password\": \"Password123!\",\r
+
+    \  \"role\": \"customer\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "const res = pm.response.json();\r
+
+      \r
+
+      if (res.success) {\r
+
+      \    pm.collectionVariables.set(\r
+
+      \        \"customer_access_token\",\r
+
+      \        res.data.accessToken\r
+
+      \    );\r
+
+      \r
+
+      \    pm.collectionVariables.set(\r
+
+      \        \"customer_refresh_token\",\r
+
+      \        res.data.refreshToken\r
+
+      \    );\r
+
+      }"
+    language: text/javascript
+order: 6000

@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{base_url}}/api/orders/6a3f7b3812461f6d405aaa89/cancel"
+method: POST
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_0wsu}}
+order: 3000

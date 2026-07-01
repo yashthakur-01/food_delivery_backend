@@ -1,0 +1,8 @@
+$kind: http-request
+url: "{{base_url}}/api/vendor/menu/6a3ceadcc809de17f352dc88"
+method: DELETE
+headers:
+  - key: Authorization
+    value: Bearer {{supabase_service_role_api_key_0c7d}}
+    description: " "
+order: 6000

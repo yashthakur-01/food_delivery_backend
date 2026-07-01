@@ -1,0 +1,9 @@
+$kind: http-request
+url: "{{base_url}}/api/users/addresses"
+method: POST
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_0o6r}}
+body:
+  type: json
+  content: '{ "address": "456 Park Ave, Mumbai", "lat": 19.0760, "lng": 72.8777 }'
+order: 3000

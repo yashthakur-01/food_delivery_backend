@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{base_url}}/api/payments/webhook"
+method: POST
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_0adf}}
+order: 4000

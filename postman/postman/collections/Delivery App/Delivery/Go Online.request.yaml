@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{base_url}}/api/delivery/online"
+method: POST
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_1aa1}}
+order: 11000

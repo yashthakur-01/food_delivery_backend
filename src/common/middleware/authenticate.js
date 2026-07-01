@@ -5,7 +5,8 @@ const { verifyToken } = require('../utils/jwt');
 module.exports = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
-
+console.log("HEADERS:", req.headers);
+console.log("AUTH:", req.headers.authorization);
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ success: false, message: 'Authentication required' });
     }

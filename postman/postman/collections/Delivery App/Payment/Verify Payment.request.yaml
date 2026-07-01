@@ -1,0 +1,15 @@
+$kind: http-request
+url: "{{base_url}}/api/payments/verify"
+method: POST
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_0adf}}
+body:
+  type: json
+  content: "{\r
+
+    \  \"paymentId\": \"6a42706b51ff75b031e00aaa\",\r
+
+    \  \"success\": true\r
+
+    }"
+order: 2000

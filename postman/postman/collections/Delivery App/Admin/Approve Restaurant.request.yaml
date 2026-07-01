@@ -1,0 +1,15 @@
+$kind: http-request
+url: "{{base_url}}/api/admin/restaurants/6a3cea1cc809de17f352dc87/approve"
+method: POST
+headers:
+  Authorization: "Bearer "
+body:
+  type: json
+  content: "{\r
+
+    \  \"success\": true,\r
+
+    \  \"message\": \"Restaurant approved\"\r
+
+    }"
+order: 3000

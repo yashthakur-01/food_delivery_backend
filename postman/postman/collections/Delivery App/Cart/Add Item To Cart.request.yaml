@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{base_url}}/api/cart/items"
+method: POST
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_1b43}}
+  Content-Type: application/json
+body:
+  type: json
+  content: "{\r
+
+    \  \"menuItemId\": \"6a3cedf2c809de17f352dc89\",\r
+
+    \  \"quantity\": 2\r
+
+    }"
+order: 5000

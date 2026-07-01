@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{base_url}}/api/orders/6a4205b4a4411df64a0be0f1/status"
+method: PATCH
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_030s}}
+  Content-Type: application/json
+body:
+  type: json
+  content: "{\r\n  \"status\": \"CONFIRMED\"\r\n}"
+order: 4000

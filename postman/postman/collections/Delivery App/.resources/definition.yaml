@@ -1,0 +1,113 @@
+$kind: collection
+name: Delivery App
+variables:
+  - key: userId
+    value: ""
+    secret: false
+  - key: cartId
+    value: ""
+    secret: false
+  - key: vendorId
+    value: ""
+    secret: false
+  - key: restaurantId
+    value: ""
+    secret: false
+  - key: orderId
+    value: ""
+    secret: false
+  - key: base_url
+    value: ""
+    secret: false
+  - key: customer_access_token
+    value: ""
+    secret: false
+  - key: customer_refresh_token
+    value: ""
+    secret: false
+  - key: token
+    value: ""
+    secret: false
+  - key: refreshToken
+    value: ""
+    secret: false
+  - key: supabase_service_role_api_key_0vd3
+    secret: true
+  - key: supabase_service_role_api_key_0o6r
+    secret: true
+  - key: supabase_service_role_api_key_1629
+    secret: true
+  - key: supabase_service_role_api_key_0j20
+    secret: true
+  - key: supabase_service_role_api_key_0b2d
+    secret: true
+  - key: supabase_service_role_api_key_09yp
+    secret: true
+  - key: supabase_service_role_api_key_0c7d
+    secret: true
+  - key: supabase_service_role_api_key_0eu4
+    secret: true
+  - key: supabase_service_role_api_key_0x0o
+    secret: true
+  - key: supabase_service_role_api_key_0ftp
+    secret: true
+  - key: supabase_service_role_api_key_0kvr
+    secret: true
+  - key: supabase_service_role_api_key_0adf
+    secret: true
+  - key: supabase_service_role_api_key_030s
+    secret: true
+  - key: supabase_service_role_api_key_0wsu
+    secret: true
+  - key: supabase_service_role_api_key_14zd
+    secret: true
+  - key: supabase_service_role_api_key_1b43
+    secret: true
+  - key: supabase_service_role_api_key_1aa1
+    secret: true
+  - key: supabase_service_role_api_key_0i4m
+    secret: true
+  - key: supabase_service_role_api_key_11g1
+    secret: true
+  - key: supabase_service_role_api_key_0w3b
+    secret: true
+  - key: bearer_token_03s9
+    secret: true
+  - key: bearer_token_14hs
+    secret: true
+  - key: bearer_token_0bcg
+    secret: true
+  - key: bearer_token_0mgv
+    secret: true
+  - key: bearer_token_0rl7
+    secret: true
+  - key: bearer_token_16zy
+    secret: true
+  - key: bearer_token_02uw
+    secret: true
+  - key: bearer_token_0gal
+    secret: true
+  - key: bearer_token_03k9
+    secret: true
+  - key: bearer_token_19xx
+    secret: true
+  - key: bearer_token_01pt
+    secret: true
+  - key: bearer_token_010y
+    secret: true
+  - key: bearer_token_0vn0
+    secret: true
+  - key: bearer_token_0mw5
+    secret: true
+  - key: bearer_token_16fb
+    secret: true
+  - key: bearer_token_06a6
+    secret: true
+  - key: bearer_token_002u
+    secret: true
+  - key: bearer_token_0jd8
+    secret: true
+  - key: bearer_token_0dvl
+    secret: true
+  - key: bearer_token_0msk
+    secret: true

@@ -1,0 +1,6 @@
+$kind: http-request
+url: http://localhost:3000/api/get-profile
+method: GET
+headers:
+  Authorization: ""
+order: 4000

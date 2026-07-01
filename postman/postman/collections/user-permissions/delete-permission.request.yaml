@@ -1,0 +1,6 @@
+$kind: http-request
+url: http://localhost:3000/api/admin/delete-permission/like
+method: DELETE
+headers:
+  Authorization: ""
+order: 6000

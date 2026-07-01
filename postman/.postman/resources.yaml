@@ -1,0 +1,11 @@
+workspace:
+  id: 772423e5-f0ed-4492-829c-2616524c0c60
+localResources:
+  environments:
+    - ../environments/Food Delivery.environment.yaml
+cloudResources:
+  collections:
+    ../postman/collections/user-permissions: 56266245-6de7a5d0-d2ce-4df1-8b5c-4b12ec51e6c0
+    ../postman/collections/Delivery App: 56266245-f95186ea-c403-4772-b369-d7d55b5fa3db
+  environments:
+    ../environments/Food Delivery.environment.yaml: 56266245-e72bc821-85fa-409c-afa9-b372ab0e4f0c

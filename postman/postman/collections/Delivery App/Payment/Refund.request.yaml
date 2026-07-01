@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{base_url}}/api/payments/6a42706b51ff75b031e00aaa/refund"
+method: POST
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_0adf}}
+body:
+  type: json
+  content: "{\r
+
+    \  \"reason\": \"Customer cancelled the order\"\r
+
+    }"
+order: 3000
