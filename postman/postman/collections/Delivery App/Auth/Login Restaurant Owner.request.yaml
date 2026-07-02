@@ -1,0 +1,35 @@
+$kind: http-request
+url: http://localhost:3001/api/auth/login/password
+method: POST
+body:
+  type: json
+  content: '{ "identifier": "+919876543201", "password": "Password123!", "role": "restaurant_owner" }'
+scripts:
+  - type: afterResponse
+    code: "const res = pm.response.json();\r
+
+      \r
+
+      if (res.success) {\r
+
+      \    pm.environment.set(\r
+
+      \        \"access_token\",\r
+
+      \        res.data.accessToken\r
+
+      \    );\r
+
+      \r
+
+      \    pm.environment.set(\r
+
+      \        \"refresh_token\",\r
+
+      \        res.data.refreshToken\r
+
+      \    );\r
+
+      }"
+    language: text/javascript
+order: 2000

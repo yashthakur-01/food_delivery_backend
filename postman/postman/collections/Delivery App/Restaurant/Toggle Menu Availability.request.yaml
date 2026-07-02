@@ -1,0 +1,9 @@
+$kind: http-request
+url: "{{base_url}}/api/vendor/menu/6a3ceadcc809de17f352dc88/toggle"
+method: PATCH
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_0c7d}}
+body:
+  type: json
+  content: "{\r\n  \"price\": 12.99\r\n}"
+order: 5000

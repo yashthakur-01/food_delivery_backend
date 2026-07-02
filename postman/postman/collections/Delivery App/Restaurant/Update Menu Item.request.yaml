@@ -1,0 +1,24 @@
+$kind: http-request
+url: PUT {{base_url}}/api/vendor/menu/6a3ceadcc809de17f352dc88
+method: PUT
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_0eu4}}
+  Content-Type: application/json
+body:
+  type: json
+  content: "{\r
+
+    \  \"name\": \"Margherita Pizza Large\",\r
+
+    \  \"price\": 12.99,\r
+
+    \  \"category\": \"Pizza\",\r
+
+    \  \"description\": \"Large pizza with extra cheese\",\r
+
+    \  \"prepTimeMin\": 20,\r
+
+    \  \"isAvailable\": true\r
+
+    }"
+order: 4000

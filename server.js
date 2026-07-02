@@ -2,6 +2,7 @@ require("dotenv").config();
 const paymentRoutes = require("./src/modules/payment/routes");
 const notificationRoutes = require("./src/modules/notification/routes");
 const adminRoutes = require("./src/modules/admin/routes");
+const orderRoutes = require("./src/modules/order/routes");
 const deliveryRoutes = require("./src/modules/delivery/routes");
 const cartRoutes = require("./src/modules/cart/routes");
 const vendorRoutes = require("./src/modules/vendor/routes");
@@ -25,7 +26,7 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(rateLimiter);
 app.use("/api/delivery", deliveryRoutes);
-
+app.use("/api/orders", orderRoutes);
 app.get("/", (req, res) => {
   res.json({ success: true, message: "API is running" });
 });
@@ -83,3 +84,4 @@ server.listen(env.PORT, () => {
   console.log(`Server running on port ${env.PORT}`);
   startJobs();
 });
+

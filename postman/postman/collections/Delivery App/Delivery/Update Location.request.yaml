@@ -1,0 +1,15 @@
+$kind: http-request
+url: "{{base_url}}/api/delivery/6a4205b4a4411df64a0be0f1/location"
+method: POST
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_1aa1}}
+body:
+  type: json
+  content: "{\r
+
+    \  \"lat\": 28.6139,\r
+
+    \  \"lng\": 77.2090\r
+
+    }"
+order: 7000

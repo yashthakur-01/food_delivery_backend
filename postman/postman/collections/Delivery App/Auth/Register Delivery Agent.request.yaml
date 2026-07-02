@@ -1,0 +1,17 @@
+$kind: http-request
+url: http://localhost:3001/api/auth/register
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"name\": \"Delivery Guy\",\r
+
+    \  \"phone\": \"+919876543203\",\r
+
+    \  \"password\": \"Password123!\",\r
+
+    \  \"role\": \"delivery\"\r
+
+    }"
+order: 3000

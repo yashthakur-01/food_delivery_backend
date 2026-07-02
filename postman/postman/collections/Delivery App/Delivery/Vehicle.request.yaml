@@ -1,0 +1,7 @@
+$kind: http-request
+name: Vehicle
+url: "{{base_url}}/api/delivery/profile/vehicle"
+method: GET
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_11g1}}
+order: 3000

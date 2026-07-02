@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{base_url}}/api/delivery/profile/bank"
+method: GET
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_0w3b}}
+order: 1000

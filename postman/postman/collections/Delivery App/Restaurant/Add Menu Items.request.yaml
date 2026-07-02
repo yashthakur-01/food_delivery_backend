@@ -1,0 +1,24 @@
+$kind: http-request
+url: "{{base_url}}/api/vendor/menu"
+method: POST
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_0ftp}}
+  Content-Type: application/json
+body:
+  type: json
+  content: "{\r
+
+    \  \"name\": \"Margherita Pizza\",\r
+
+    \  \"price\": 9.99,\r
+
+    \  \"category\": \"Pizza\",\r
+
+    \  \"description\": \"Fresh mozzarella and tomato sauce\",\r
+
+    \  \"prepTimeMin\": 15,\r
+
+    \  \"isAvailable\": true\r
+
+    }"
+order: 2000

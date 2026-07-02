@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{base_url}}/api/users/favorites/6a3cea1cc809de17f352dc87"
+method: POST
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_0vd3}}
+order: 7000

@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{base_url}}/api/notifications"
+method: GET
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_14zd}}
+order: 1000

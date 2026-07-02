@@ -1,0 +1,19 @@
+$kind: http-request
+url: "{{base_url}}/api/auth/register"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: "{\r
+
+    \  \"name\": \"Pizza Owner\",\r
+
+    \  \"phone\": \"+919876543201\",\r
+
+    \  \"password\": \"Password123!\",\r
+
+    \  \"role\": \"restaurant_owner\"\r
+
+    }"
+order: 1000

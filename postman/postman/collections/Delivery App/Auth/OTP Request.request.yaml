@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{base_url}}/api/auth/login/otp/request"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"phone\": \"+919876543204\",\r
+
+    \  \"role\" : \"customer\"\r
+
+    }"
+order: 9000

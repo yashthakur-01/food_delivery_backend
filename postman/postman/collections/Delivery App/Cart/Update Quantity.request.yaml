@@ -1,0 +1,9 @@
+$kind: http-request
+url: "{{base_url}}/api/cart/items/6a3d78b799f8c2487d8bf7d6"
+method: PATCH
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_1b43}}
+body:
+  type: json
+  content: "{\r\n  \"quantity\": 3\r\n}"
+order: 4000

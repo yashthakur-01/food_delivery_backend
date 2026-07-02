@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{base_url}}/api/vendor/orders/incoming"
+method: GET
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_0b2d}}
+order: 3000

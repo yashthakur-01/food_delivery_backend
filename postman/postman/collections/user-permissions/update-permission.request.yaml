@@ -1,0 +1,15 @@
+$kind: http-request
+url: http://localhost:3000/api/admin/update-permission/lucky1
+method: PUT
+headers:
+  Authorization: ""
+body:
+  type: json
+  content: "{\r
+
+    \    \"permission_name\": \"lucky1\",\r
+
+    \    \"is_default\": true\r
+
+    }"
+order: 5000

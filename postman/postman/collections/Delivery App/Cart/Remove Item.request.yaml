@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{base_url}}/api/cart/items/6a3d78b799f8c2487d8bf7d6"
+method: DELETE
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_1b43}}
+order: 3000

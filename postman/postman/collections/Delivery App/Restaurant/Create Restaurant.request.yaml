@@ -1,0 +1,36 @@
+$kind: http-request
+url: "{{base_url}}/api/vendor/profile"
+method: PUT
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_0kvr}}
+  Content-Type: application/json
+body:
+  type: json
+  content: "{\r
+
+    \  \"name\": \"Pizza Palace\",\r
+
+    \  \"address\": \"Lajpat Nagar, Delhi\",\r
+
+    \  \"phone\": \"+919876543201\",\r
+
+    \  \"email\": \"pizza@example.com\",\r
+
+    \  \"description\": \"Authentic Italian Pizza\",\r
+
+    \  \"cuisineType\": \"Italian\",\r
+
+    \  \"category\": \"Pizza\",\r
+
+    \  \"deliveryTimeMin\": 20,\r
+
+    \  \"deliveryTimMax\": 35,\r
+
+    \  \"deliveryFee\": 40,\r
+
+    \  \"minOrderAmount\": 150\r
+
+    }"
+auth:
+  type: noauth
+order: 1000

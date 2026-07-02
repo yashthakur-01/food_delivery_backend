@@ -1,0 +1,15 @@
+$kind: http-request
+url: "{{base_url}}/api/users/me"
+method: GET
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_1629}}
+body:
+  type: json
+  content: "{\r
+
+    \  \"name\": \"Test Customer\",\r
+
+    \  \"email\": \"customer@example.com\"\r
+
+    }"
+order: 2000

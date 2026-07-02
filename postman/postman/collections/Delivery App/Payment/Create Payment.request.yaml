@@ -1,0 +1,18 @@
+$kind: http-request
+url: "{{base_url}}/api/payments"
+method: POST
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_0adf}}
+  Content-Type: application/json
+body:
+  type: json
+  content: "{\r
+
+    \  \"orderId\": \"6a42704151ff75b031e00aa8\",\r
+
+    \  \"amount\": 19.98,\r
+
+    \  \"method\": \"COD\"\r
+
+    }"
+order: 1000

@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{base_url}}/api/cart/checkout"
+method: POST
+headers:
+  Authorization: Bearer {{supabase_service_role_api_key_1b43}}
+  Content-Type: application/json
+body:
+  type: json
+  content: "{\r
+
+    \  \"address_id\": \"6a3d706c99f8c2487d8bf7d2\"\r
+
+    }"
+order: 1000
