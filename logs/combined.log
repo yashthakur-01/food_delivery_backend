@@ -4154,3 +4154,5 @@ Validation Error Count: 1
     at _issueTokens (D:\delivery_app_backend\food_delivery_backend\src\modules\auth\service.js:92:23)
     at Object.loginWithPassword (D:\delivery_app_backend\food_delivery_backend\src\modules\auth\service.js:121:10)
     at async loginWithPassword (D:\delivery_app_backend\food_delivery_backend\src\modules\auth\controller.js:25:20)
+2026-07-04T04:24:41.946Z [INFO]: [jobs] Starting background jobs...
+2026-07-04T04:24:41.951Z [INFO]: [otpCleanup] Scheduled to run every 10 minutes
