@@ -28,4 +28,7 @@ router.delete('/favorites/:restaurantId',...customerGuard, controller.removeFavo
 // Wallet
 router.get('/wallet',                   ...customerGuard, controller.getWallet);
 
+// Dashboard
+router.get('/dashboard',               ...customerGuard, controller.getDashboard);
+
 module.exports = router;

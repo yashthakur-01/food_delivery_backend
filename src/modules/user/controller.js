@@ -86,9 +86,25 @@ async function getWallet(req, res, next) {
   } catch (err) { next(err); }
 }
 
+/**GET Dashboard */
+async function getDashboard(req, res, next) {
+  try {
+    const data = await service.getDashboard(req.user.id);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Customer dashboard retrieved',
+      data,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+
 module.exports = {
   getProfile, updateProfile,
   getAddresses, addAddress, deleteAddress,
   getFavorites, addFavorite, removeFavorite,
-  getWallet,
+  getWallet, getDashboard,
 };

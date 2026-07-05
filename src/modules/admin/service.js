@@ -83,4 +83,81 @@ const getAnalytics = async ({ startDate, endDate }) => {
   };
 };
 
-module.exports = { approveRestaurant, approveDeliveryAgent, getAnalytics };
+const getDashboard = async () => {
+  const [
+    totalUsers,
+    totalRestaurants,
+    totalDeliveryAgents,
+    totalOrders,
+    revenueResult,
+    pendingRestaurants,
+    pendingDeliveryAgents,
+    recentOrders,
+  ] = await Promise.all([
+    prisma.user.count({
+      where: { role: 'customer' },
+    }),
+
+    prisma.restaurant.count(),
+
+    prisma.user.count({
+      where: { role: 'delivery' },
+    }),
+
+    prisma.order.count(),
+
+    prisma.payment.aggregate({
+      _sum: { amount: true },
+      where: { status: 'SUCCESS' },
+    }),
+
+    prisma.restaurant.count({
+      where: { approvalStatus: 'pending' },
+    }),
+
+    prisma.user.count({
+      where: {
+        role: 'delivery',
+        NOT: { status: 'active' },
+      },
+    }),
+
+    prisma.order.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 5,
+      select: {
+        id: true,
+        orderNumber: true,
+        status: true,
+        totalAmount: true,
+        createdAt: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        restaurant: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    }),
+  ]);
+
+  return {
+    totalUsers,
+    totalRestaurants,
+    totalDeliveryAgents,
+    totalOrders,
+    totalRevenue: revenueResult._sum.amount ?? 0,
+    pendingRestaurants,
+    pendingDeliveryAgents,
+    recentOrders,
+  };
+};
+
+module.exports = { approveRestaurant, approveDeliveryAgent, getAnalytics, getDashboard
+ };

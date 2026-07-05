@@ -1,0 +1,5 @@
+$kind: http-request
+name: Dashboard
+url: "{{base_url}}/api/admin/dashboard"
+method: GET
+order: 851461703469440

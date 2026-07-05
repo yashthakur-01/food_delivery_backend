@@ -43,4 +43,11 @@ router.get(
   controller.getAnalytics
 );
 
+router.get(
+  '/dashboard',
+  authenticate,
+  authorize('admin'),
+  controller.getDashboard
+);
+
 module.exports = router;

@@ -30,4 +30,17 @@ const getAnalytics = async (req, res, next) => {
   }
 };
 
-module.exports = { approveRestaurant, approveDeliveryAgent, getAnalytics };
+const getDashboard = async (req, res, next) => {
+  try {
+    const dashboard = await adminService.getDashboard();
+
+    return success(
+      res,
+      'Admin dashboard retrieved',
+      dashboard
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+module.exports = { approveRestaurant, approveDeliveryAgent, getAnalytics, getDashboard };

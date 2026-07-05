@@ -3962,3 +3962,21 @@ Validation Error Count: 1
     at ei.request (D:\delivery_app_backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:6300)
     at async a (D:\delivery_app_backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:130:9551)
     at async cleanupExpiredOtps (D:\delivery_app_backend\food_delivery_backend\src\jobs\otpCleanup.js:8:20)
+2026-07-03T14:37:08.687Z [ERROR]: Error: secretOrPrivateKey must have a value
+    at module.exports [as sign] (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\jsonwebtoken\sign.js:111:20)
+    at signAccessToken (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\common\utils\jwt.js:5:14)
+    at _issueTokens (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\auth\service.js:92:23)
+    at Object.loginWithPassword (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\auth\service.js:121:10)
+    at async loginWithPassword (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\auth\controller.js:25:20)
+2026-07-03T14:40:18.866Z [ERROR]: Error: secretOrPrivateKey must have a value
+    at module.exports [as sign] (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\jsonwebtoken\sign.js:111:20)
+    at signAccessToken (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\common\utils\jwt.js:5:14)
+    at _issueTokens (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\auth\service.js:92:23)
+    at Object.loginWithPassword (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\auth\service.js:121:10)
+    at async loginWithPassword (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\auth\controller.js:25:20)
+2026-07-03T16:56:54.431Z [ERROR]: Error: secretOrPrivateKey must have a value
+    at module.exports [as sign] (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\jsonwebtoken\sign.js:111:20)
+    at signAccessToken (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\common\utils\jwt.js:5:14)
+    at _issueTokens (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\auth\service.js:92:23)
+    at Object.loginWithPassword (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\auth\service.js:121:10)
+    at async loginWithPassword (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\auth\controller.js:25:20)

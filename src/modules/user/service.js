@@ -62,4 +62,92 @@ async function deleteAddress(userId, addressId) {
   await prisma.address.delete({ where: { id: addressId } });
 }
 
-module.exports = { getProfile, updateProfile, addAddress, deleteAddress };
+/** Return dashboard summary for the authenticated customer. */
+async function getDashboard(userId) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      wallet: {
+        select: {
+          balance: true,
+        },
+      },
+      _count: {
+        select: {
+          orders: true,
+          favorites: true,
+          notifications: true,
+        },
+      },
+    },
+  });
+
+  if (!user) {
+    throw new AppError(404, 'NOT_FOUND', 'User not found');
+  }
+
+  const activeOrders = await prisma.order.count({
+    where: {
+      userId,
+      status: {
+        in: ['PENDING', 'CONFIRMED', 'PREPARING', 'OUT_FOR_DELIVERY'],
+      },
+    },
+  });
+
+  const recentOrders = await prisma.order.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    take: 5,
+    select: {
+      id: true,
+      orderNumber: true,
+      status: true,
+      totalAmount: true,
+      createdAt: true,
+      restaurant: {
+        select: {
+          id: true,
+          name: true,
+          imageUrl: true,
+        },
+      },
+    },
+  });
+
+  const recentNotifications = await prisma.notification.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    take: 5,
+    select: {
+      id: true,
+      title: true,
+      message: true,
+      type: true,
+      isRead: true,
+      createdAt: true,
+    },
+  });
+
+  return {
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+    },
+    walletBalance: user.wallet?.balance ?? 0,
+    totalOrders: user._count.orders,
+    activeOrders,
+    favoriteRestaurants: user._count.favorites,
+    totalNotifications: user._count.notifications,
+    recentOrders,
+    recentNotifications,
+  };
+}
+
+module.exports = { getProfile, updateProfile, addAddress, deleteAddress, getDashboard };
