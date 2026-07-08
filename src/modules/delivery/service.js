@@ -3,9 +3,12 @@
 const prisma = require('../../config/db');
 const AppError = require('../../common/utils/AppError');
 
-const OUT_FOR_DELIVERY = 'OUT_FOR_DELIVERY';
-const DELIVERED = 'DELIVERED';
-const CONFIRMED = 'CONFIRMED';
+//REUSING THE STATUS CONSTANTS WHICH IS IN constants/orderStatus.js
+const ORDER_STATUS = require("../../common/constants/orderStatus");
+
+// Socket helper functions — avoids raw io.to(...).emit(...) calls in service layer
+const { emitDeliveryLocation } = require('../../sockets/deliveryHandlers');
+const { emitOrderStatusUpdate } = require('../../sockets/orderHandlers');
 
 // Flat delivery fee per completed order
 const DELIVERY_FEE = 5.00;
@@ -35,7 +38,7 @@ async function getDashboard(agentId) {
 
   // All completed trackings for this agent
   const allCompleted = await prisma.deliveryTracking.findMany({
-    where: { agentId, order: { status: DELIVERED } },
+    where: { agentId, order: { status: ORDER_STATUS.DELIVERED } },
     include: { order: { select: { totalAmount: true, createdAt: true } } },
   });
 
@@ -72,7 +75,7 @@ async function getDashboard(agentId) {
 
   // Active delivery
   const activeTracking = await prisma.deliveryTracking.findFirst({
-    where: { agentId, order: { status: OUT_FOR_DELIVERY } },
+    where: { agentId, order: { status: ORDER_STATUS.OUT_FOR_DELIVERY } },
     include: {
       order: {
         include: {
@@ -127,12 +130,11 @@ async function goOffline(agentId) {
 }
 
 // ─── Available / Active / History ────────────────────────────────────────────
-
 async function getAvailableOrders({ page = 1, limit = 20 } = {}) {
   const skip = (page - 1) * limit;
   const [orders, total] = await Promise.all([
     prisma.order.findMany({
-      where: { status: CONFIRMED, tracking: null },
+      where: { status: ORDER_STATUS.CONFIRMED, tracking: null },
       skip, take: limit,
       orderBy: { createdAt: 'desc' },
       include: {
@@ -141,7 +143,7 @@ async function getAvailableOrders({ page = 1, limit = 20 } = {}) {
         items: true,
       },
     }),
-    prisma.order.count({ where: { status: CONFIRMED, tracking: null } }),
+    prisma.order.count({ where: { status: ORDER_STATUS.CONFIRMED, tracking: null } }),
   ]);
 
   const enriched = orders.map((o) => ({
@@ -156,7 +158,7 @@ async function getAvailableOrders({ page = 1, limit = 20 } = {}) {
 
 async function getActiveDelivery(agentId) {
   const tracking = await prisma.deliveryTracking.findFirst({
-    where: { agentId, order: { status: OUT_FOR_DELIVERY } },
+    where: { agentId, order: { status: ORDER_STATUS.OUT_FOR_DELIVERY } },
     include: {
       order: {
         include: {
@@ -181,12 +183,12 @@ async function getDeliveryHistory(agentId, { page = 1, limit = 20 } = {}) {
   const skip = (page - 1) * limit;
   const [trackings, total] = await Promise.all([
     prisma.deliveryTracking.findMany({
-      where: { agentId, order: { status: DELIVERED } },
+      where: { agentId, order: { status: ORDER_STATUS.DELIVERED } },
       skip, take: limit,
       orderBy: { completedAt: 'desc' },
       include: { order: { include: { restaurant: { select: { id: true, name: true } } } } },
     }),
-    prisma.deliveryTracking.count({ where: { agentId, order: { status: DELIVERED } } }),
+    prisma.deliveryTracking.count({ where: { agentId, order: { status: ORDER_STATUS.DELIVERED } } }),
   ]);
   return { deliveries: trackings, total, page, limit };
 }
@@ -200,11 +202,11 @@ async function acceptOrder(orderId, agentId) {
   });
 
   if (!order) throw new AppError(404, 'NOT_FOUND', 'Order not found');
-  if (order.status !== CONFIRMED) throw new AppError(400, 'INVALID_STATUS', `Order cannot be accepted in status: ${order.status}`);
+  if (order.status !== ORDER_STATUS.CONFIRMED) throw new AppError(400, 'INVALID_STATUS', `Order cannot be accepted in status: ${order.status}`);
   if (order.tracking) throw new AppError(409, 'CONFLICT', 'Order has already been assigned to a delivery agent');
 
   const [updatedOrder] = await prisma.$transaction([
-    prisma.order.update({ where: { id: orderId }, data: { status: OUT_FOR_DELIVERY } }),
+    prisma.order.update({ where: { id: orderId }, data: { status: ORDER_STATUS.OUT_FOR_DELIVERY } }),
     prisma.deliveryTracking.create({ data: { orderId, agentId, riderName: agentId } }),
   ]);
 
@@ -212,6 +214,14 @@ async function acceptOrder(orderId, agentId) {
 }
 
 async function updateLocation(orderId, agentId, lat, lng, io) {
+  //  Validate coordinates before any DB work
+  if (typeof lat !== 'number' || lat < -90 || lat > 90) {
+    throw new AppError(400, 'INVALID_COORDINATES', 'lat must be a number between -90 and 90');
+  }
+  if (typeof lng !== 'number' || lng < -180 || lng > 180) {
+    throw new AppError(400, 'INVALID_COORDINATES', 'lng must be a number between -180 and 180');
+  }
+
   const tracking = await prisma.deliveryTracking.findUnique({
     where: { orderId },
     include: { order: true },
@@ -228,7 +238,15 @@ async function updateLocation(orderId, agentId, lat, lng, io) {
   });
 
   if (io) {
-    io.to(`order:${orderId}`).emit('delivery_location', { order_id: orderId, lat, lng });
+    //  Include updatedAt so the frontend can detect stale updates
+    // Use the helper function instead of raw io.to().emit()
+    const customerId = tracking.order.userId;
+    emitDeliveryLocation(io, customerId, {
+      order_id: orderId,
+      lat,
+      lng,
+      updatedAt: new Date(),
+    });
   }
 
   return updated;
@@ -244,13 +262,13 @@ async function completeOrder(orderId, agentId, io) {
   if (tracking.agentId !== agentId && tracking.riderName !== String(agentId)) {
     throw new AppError(403, 'FORBIDDEN', 'You are not the assigned agent for this order');
   }
-  if (tracking.order.status !== OUT_FOR_DELIVERY) {
+  if (tracking.order.status !== ORDER_STATUS.OUT_FOR_DELIVERY) {
     throw new AppError(400, 'INVALID_STATUS', `Order cannot be completed in status: ${tracking.order.status}`);
   }
 
   const now = new Date();
   const [updatedOrder] = await prisma.$transaction([
-    prisma.order.update({ where: { id: orderId }, data: { status: DELIVERED } }),
+    prisma.order.update({ where: { id: orderId }, data: { status: ORDER_STATUS.DELIVERED } }),
     prisma.deliveryTracking.update({
       where: { orderId },
       data: { earnings: DELIVERY_FEE, completedAt: now },
@@ -258,9 +276,10 @@ async function completeOrder(orderId, agentId, io) {
   ]);
 
   if (io) {
-    io.to(`user:${tracking.order.userId}`).emit('order_status_update', {
+    // Use helper function instead of raw io.to().emit()
+    emitOrderStatusUpdate(io, tracking.order.userId, {
       order_id: orderId,
-      status: DELIVERED,
+      status: ORDER_STATUS.DELIVERED,
     });
   }
 
