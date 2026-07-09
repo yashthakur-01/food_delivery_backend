@@ -21,6 +21,15 @@ const approveDeliveryAgent = async (req, res, next) => {
   }
 };
 
+const approveStore = async (req, res, next) => {
+  try{ 
+    const store = await adminService.approveStore(req.params.id);
+    return success(res, "store approved", store);
+  } catch(err){
+    next(err);
+  }
+}
+
 const getAnalytics = async (req, res, next) => {
   try {
     const analytics = await adminService.getAnalytics(req.query);

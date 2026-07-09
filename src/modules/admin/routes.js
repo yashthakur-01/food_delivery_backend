@@ -35,6 +35,13 @@ router.post(
   controller.approveDeliveryAgent
 );
 
+router.post(
+  '/store/:id/approve',
+  authenticate,
+  authorize('admin'),
+  controller.approveStore
+)
+
 router.get(
   '/analytics',
   authenticate,

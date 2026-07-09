@@ -37,6 +37,25 @@ const approveDeliveryAgent = async (agentId) => {
   });
 };
 
+const approveStore = async (storeId) => {
+  const store = await prisma.store.findUnique({
+    where: { id: storeId}
+  });
+
+  if(!store){
+    throw new AppError(404, 'NOT_FOUND', 'Store not found');
+  }
+
+  if(store.approvalStatus === 'approved'){
+    throw new AppError(400, 'BAD_REQUEST', 'Store is already approved');
+  }
+
+  return prisma.store.update({
+    where: { id: storeId },
+    data : { approvalStatus: 'approved'}
+  });
+} 
+
 const getAnalytics = async ({ startDate, endDate }) => {
   const start = new Date(startDate);
   const end = new Date(endDate);
@@ -92,6 +111,7 @@ const getDashboard = async () => {
     revenueResult,
     pendingRestaurants,
     pendingDeliveryAgents,
+    pendingStores,
     recentOrders,
   ] = await Promise.all([
     prisma.user.count({
@@ -120,6 +140,10 @@ const getDashboard = async () => {
         role: 'delivery',
         NOT: { status: 'active' },
       },
+    }),
+
+    prisma.store.count({
+      where: {approvalStatus: 'pending'}
     }),
 
     prisma.order.findMany({
