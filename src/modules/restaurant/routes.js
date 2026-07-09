@@ -2,7 +2,7 @@
 
 const { Router } = require('express');
 const controller = require('./controller');
-const { addMenuItemSchema, updateMenuItemSchema } = require('./validation');
+const { addMenuItemSchema, updateMenuItemSchema} = require('./validation');
 const validate = require('../../common/middleware/validate');
 const authenticate = require('../../common/middleware/authenticate');
 const authorize = require('../../common/middleware/authorize');
@@ -24,5 +24,9 @@ router.delete('/search/history',       authenticate, controller.clearSearchHisto
 // Restaurant owner — menu management
 router.post('/:id/menu',               authenticate, authorize('restaurant_owner'), validate(addMenuItemSchema),    controller.addMenuItem);
 router.patch('/:id/menu/:itemId',      authenticate, authorize('restaurant_owner'), validate(updateMenuItemSchema), controller.updateMenuItem);
+
+// Restaurant owner — replacement requests
+router.get('/order-request/:id',       authenticate, authorize('restaurant_owner'), controller.getOrderRequest);
+router.patch('/order-request/:id',     authenticate, authorize('restaurant_owner'), controller.updateOrderRequest);
 
 module.exports = router;

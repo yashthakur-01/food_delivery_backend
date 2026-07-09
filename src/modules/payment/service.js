@@ -202,30 +202,31 @@ const handleWebhook = async (rawBody, signature) => {
 
 // ─── Refund ───────────────────────────────────────────────────────────────────
 
-const refund = async ({ paymentId, userId }) => {
+const processRefund = async (orderId, amount) => {
   const payment = await prisma.payment.findUnique({
-    where: { id: paymentId },
-    include: { order: true },
+    where:{ orderId }
   });
 
-  if (!payment) throw new AppError(404, 'PAYMENT_NOT_FOUND', 'Payment not found');
-  if (payment.order.userId !== userId) throw new AppError(403, 'FORBIDDEN', 'You can only refund your own payment');
-  if (payment.status !== PAYMENT_STATUS.SUCCESS) throw new AppError(400, 'PAYMENT_NOT_PAID', 'Refund allowed only when payment status is SUCCESS');
-  if (payment.order.status !== ORDER_STATUS.CANCELLED) throw new AppError(400, 'ORDER_NOT_CANCELLED', 'Refund allowed only when order status is CANCELLED');
+  if(!payment){
+    throw new AppError(404, 'PAYMENT_NOT_FOUND', 'Payment not found');
+  }
 
-  // Initiate Razorpay refund if configured
+  if(payment.status !== PAYMENT_STATUS.SUCCESS){
+    throw new AppError(400, 'INVALID_PAYMENT', 'Only successful payments can be refunded');
+  }
+
   const razorpay = getRazorpay();
-  if (razorpay && payment.razorpayPaymentId) {
+
+  if(razorpay && payment.razorpayPaymentId){
     await razorpay.payments.refund(payment.razorpayPaymentId, {
-      amount: Math.round(payment.amount * 100),
-      notes: { reason: 'Order cancelled' },
+      amount: Math.round(amount * 100)
     });
   }
 
   return prisma.payment.update({
-    where: { id: paymentId },
-    data: { status: PAYMENT_STATUS.REFUNDED },
+    where:{ id: payment.id },
+    data:{ status: PAYMENT_STATUS.REFUNDED }
   });
 };
 
-module.exports = { createPayment, verifyPayment, handleWebhook, refund };
+module.exports = { createPayment, verifyPayment, handleWebhook, processRefund };

@@ -12,6 +12,10 @@ const approveRestaurant = async (restaurantId) => {
     throw new AppError(404, 'NOT_FOUND', 'Restaurant not found');
   }
 
+  if(restaurant.approvalStatus === 'approved'){
+    throw new AppError(400, 'BAD_REQUEST', 'Restaurant is already approved');
+  }
+
   return prisma.restaurant.update({
     where: { id: restaurantId },
     data: { approvalStatus: 'approved' },
@@ -31,15 +35,39 @@ const approveDeliveryAgent = async (agentId) => {
     throw new AppError(400, 'BAD_REQUEST', 'User is not a delivery agent');
   }
 
+  if(agent.approvalStatus === 'approved'){
+    throw new AppError(400, 'BAD_REQUEST', 'Delivery agent is already approved');
+  }
+
   return prisma.user.update({
     where: { id: agentId },
-    data: { status: 'active' },
+    data: { approvalStatus: 'approved' },
   });
 };
 
+const approveStore = async (storeId) => {
+  const store = await prisma.store.findUnique({
+    where: { id: storeId}
+  });
+
+  if(!store){
+    throw new AppError(404, 'NOT_FOUND', 'Store not found');
+  }
+
+  if(store.approvalStatus === 'approved'){
+    throw new AppError(400, 'BAD_REQUEST', 'Store is already approved');
+  }
+
+  return prisma.store.update({
+    where: { id: storeId },
+    data : { approvalStatus: 'approved'}
+  });
+} 
+
 const getAnalytics = async ({ startDate, endDate }) => {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
+  
+  const start = startDate? new Date(startDate): new Date(new Date().setDate(new Date().getDate() - 30)); // Default to last 30 days
+  const end = endDate? new Date(endDate): new Date(); // Default to today
 
   const [totalOrders, revenueResult, activeRestaurants, activeAgents] = await Promise.all([
     // Total orders created within range
@@ -92,6 +120,7 @@ const getDashboard = async () => {
     revenueResult,
     pendingRestaurants,
     pendingDeliveryAgents,
+    pendingStores,
     recentOrders,
   ] = await Promise.all([
     prisma.user.count({
@@ -118,8 +147,12 @@ const getDashboard = async () => {
     prisma.user.count({
       where: {
         role: 'delivery',
-        NOT: { status: 'active' },
+        approvalStatus: 'pending',
       },
+    }),
+
+    prisma.store.count({
+      where: {approvalStatus: 'pending'}
     }),
 
     prisma.order.findMany({
@@ -155,9 +188,35 @@ const getDashboard = async () => {
     totalRevenue: revenueResult._sum.amount ?? 0,
     pendingRestaurants,
     pendingDeliveryAgents,
+    pendingStores,
     recentOrders,
   };
 };
 
-module.exports = { approveRestaurant, approveDeliveryAgent, getAnalytics, getDashboard
- };
+
+const getPendingRestaurants = async () => {
+  const pendingRestaurants = await prisma.restaurant.findMany({
+    where: {approvalStatus: 'pending'},
+    orderBy: { createdAt: 'desc' }
+  });
+  return pendingRestaurants;
+};
+
+const getPendingStores = async () => {
+  const pendingStores = await prisma.store.findMany({
+    where: {approvalStatus: 'pending'},
+    orderBy: { createdAt: 'desc' }
+  });
+  return pendingStores;
+}
+
+const getPendingDeliveryAgents = async () => {
+  const pendingAgents = await prisma.user.findMany({
+    where: {role: 'delivery', approvalStatus: 'pending'},
+    omit: {password: true},
+    orderBy: { createdAt: 'desc' }
+  })
+  return pendingAgents;
+}
+
+module.exports = { approveRestaurant, approveDeliveryAgent, getAnalytics, getDashboard, approveStore, getPendingRestaurants, getPendingDeliveryAgents, getPendingStores };

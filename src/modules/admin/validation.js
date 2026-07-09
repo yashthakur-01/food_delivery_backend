@@ -3,8 +3,8 @@
 const Joi = require('joi');
 
 const analyticsSchema = Joi.object({
-  startDate: Joi.string().isoDate().required(),
-  endDate: Joi.string().isoDate().required(),
+  startDate: Joi.string().isoDate().optional(),
+  endDate: Joi.string().isoDate().optional(),
 });
 
 module.exports = { analyticsSchema };

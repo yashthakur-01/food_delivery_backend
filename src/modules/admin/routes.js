@@ -35,6 +35,13 @@ router.post(
   controller.approveDeliveryAgent
 );
 
+router.post(
+  '/stores/:id/approve',
+  authenticate,
+  authorize('admin'),
+  controller.approveStore
+)
+
 router.get(
   '/analytics',
   authenticate,
@@ -49,5 +56,26 @@ router.get(
   authorize('admin'),
   controller.getDashboard
 );
+
+router.get(
+  '/pending-approvals/restaurants',
+  authenticate,
+  authorize('admin'),
+  controller.getPendingRestaurants
+)
+
+router.get(
+  '/pending-approvals/delivery-agents',
+  authenticate,
+  authorize('admin'),
+  controller.getPendingDeliveryAgents
+)
+
+router.get(
+  '/pending-approvals/stores',
+  authenticate,
+  authorize('admin'),
+  controller.getPendingStores
+)
 
 module.exports = router;

@@ -19,8 +19,4 @@ const verifyPaymentSchema = Joi.object({
   success: Joi.boolean().optional(),
 }).or('razorpaySignature', 'success'); // at least one must be present
 
-const refundSchema = Joi.object({
-  reason: Joi.string().min(3).max(255).optional(),
-});
-
-module.exports = { createPaymentSchema, verifyPaymentSchema, refundSchema };
+module.exports = { createPaymentSchema, verifyPaymentSchema };

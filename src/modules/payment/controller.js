@@ -17,13 +17,6 @@ const verifyPayment = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-const refund = async (req, res, next) => {
-  try {
-    const payment = await paymentService.refund({ paymentId: req.params.id, userId: req.user.id });
-    return success(res, 'Refund processed', payment);
-  } catch (err) { next(err); }
-};
-
 /**
  * POST /api/payments/webhook
  * Razorpay sends raw body — must be parsed with express.raw() before this handler.
@@ -38,4 +31,4 @@ const webhook = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-module.exports = { createPayment, verifyPayment, refund, webhook };
+module.exports = { createPayment, verifyPayment, webhook };

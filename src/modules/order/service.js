@@ -3,6 +3,9 @@
 const prisma = require('../../config/db');
 const AppError = require('../../common/utils/AppError');
 const ORDER_STATUS = require('../../common/constants/orderStatus');
+const notificationService = require('../notification/service');
+const REQUEST_STATUS = require('../../common/constants/OrderRequest');
+const REQUEST_TYPE = require("../../common/constants/requestType")
 
 const VALID_TRANSITIONS = {
   [ORDER_STATUS.PENDING]:          [ORDER_STATUS.CONFIRMED, ORDER_STATUS.CANCELLED],
@@ -18,8 +21,20 @@ const CANCELLABLE_STATUSES = [ORDER_STATUS.PENDING, ORDER_STATUS.CONFIRMED];
 /**
  * Create a new order.
  */
-async function createOrder(customerId, { restaurant_id, address_id, items }) {
+async function createOrder(customerId, { restaurant_id, address_id, items }, additionalData = null) {
   const menuItemIds = items.map((i) => i.menu_item_id);
+  
+  let address;
+  if(address_id){
+    address = await prisma.address.findUnique({ where: { id: address_id } });
+    if(!address || address.userId !== customerId){
+      throw new AppError(400, 'INVALID_ADDRESS', 'Address does not belong to the customer');
+    }
+  }
+
+  if (!address && additionalData?.addressLine) {
+    address = additionalData;
+  }
 
   // Fetch all requested menu items that belong to the restaurant
   const menuItems = await prisma.menuItem.findMany({
@@ -31,7 +46,9 @@ async function createOrder(customerId, { restaurant_id, address_id, items }) {
   }
 
   const priceMap = Object.fromEntries(menuItems.map((m) => [m.id, m.price]));
-  const total = items.reduce((sum, item) => sum + priceMap[item.menu_item_id] * item.quantity, 0);
+  const total = additionalData?.freeReplacement ? 0 : items.reduce((sum, item) => sum + priceMap[item.menu_item_id] * item.quantity, 0);
+
+  const deliveryAddress = address.addressLine ?? `${address.line1} ${address.line2 ?? ''} ${address.city ?? ''} ${address.state ?? ''} ${address.pincode ?? ''}`;
 
   const order = await prisma.order.create({
     data: {
@@ -39,6 +56,9 @@ async function createOrder(customerId, { restaurant_id, address_id, items }) {
       restaurantId: restaurant_id,
       status: ORDER_STATUS.PENDING,
       totalAmount: total,
+      deliveryAddress,
+      deliveryLat: address.latitude,
+      deliveryLng: address.longitude,
       items: {
         create: items.map((item) => ({
           menuItemId: item.menu_item_id,
@@ -138,4 +158,89 @@ async function updateOrderStatus(orderId, newStatus, io) {
   return updated;
 }
 
-module.exports = { createOrder, cancelOrder, getOrders, updateOrderStatus };
+async function createOrderRequest(orderId, customerId, { type, reason, image_url, items }, io){
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: { items: true }
+  });
+
+  if(!order) throw new AppError(404, 'NOT_FOUND', 'Order not found');
+
+  if(order.userId !== customerId){
+    throw new AppError(403, 'FORBIDDEN', 'You do not own this order');
+  }
+
+  if(order.status !== ORDER_STATUS.DELIVERED){
+    throw new AppError(400, 'INVALID_STATUS', 'Only delivered orders can have refund/replacement requests');
+  }
+
+  const restaurantId = order.restaurantId;
+
+  const restaurant = await prisma.restaurant.findUnique({ where: { id: restaurantId } });
+
+  if(restaurant.isOpen === false){
+    throw new AppError(400, 'RESTAURANT_CLOSED', 'Cannot create order request. The restaurant is closed');
+  }
+  const menuItemIds = items.map((item) => item.menu_item_id);
+
+  const menuItems = await prisma.menuItem.findMany({
+    where: {
+      id: { in: menuItemIds },
+      restaurantId: order.restaurantId
+    }
+  });
+
+  if(menuItems.length !== menuItemIds.length){
+    throw new AppError(400, 'INVALID_ITEMS', 'Invalid request items');
+  }
+
+  const priceMap = Object.fromEntries(menuItems.map((item) => [item.id, item.price]));
+
+  const replaceOrderItems = items.map((item) => ({
+    menuItemId: item.menu_item_id,
+    quantity: item.quantity,
+    price: priceMap[item.menu_item_id]
+  }));
+
+  const refundAmount = type === REQUEST_TYPE.REFUND
+    ? replaceOrderItems.reduce((sum,item)=>sum+(item.price*item.quantity),0)
+    : null;
+
+  const replaceOrderRecord = await prisma.orderRequest.create({
+    data: {
+      orderId,
+      userId: customerId,
+      reason,
+      imageUrl: image_url,
+      oldItems: order.items,
+      newItems: type === REQUEST_TYPE.REPLACE ? replaceOrderItems : null,
+      refundAmount,
+      status: REQUEST_STATUS.PENDING,
+      type
+    }
+  });
+
+  const notification = {
+    title: 'New Order Request',
+    message: `A new ${type} request has been made for order #${orderId}.`,
+    type: 'order_request'
+  }
+
+  await notificationService.createNotification({...notification, userId: restaurant.ownerId});
+
+  await notificationService.sendPushNotification({...notification, userId: restaurant.ownerId});
+
+  if(io){
+    io.to(`restaurant:${order.restaurantId}`).emit('order_request', {
+      order_id: orderId,
+      request_id: replaceOrderRecord.id,
+      reason,
+      image_url,
+      items: replaceOrderItems
+    });
+  }
+
+  return replaceOrderRecord;
+}
+
+module.exports = { createOrder, cancelOrder, getOrders, updateOrderStatus, createOrderRequest };

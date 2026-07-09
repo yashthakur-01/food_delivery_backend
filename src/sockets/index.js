@@ -2,6 +2,8 @@ const { Server } = require("socket.io");
 const { verifyToken } = require("../common/utils/jwt");
 const { DELIVERY } = require("../common/constants/roles");
 const prisma = require("../config/db");
+const deliveryService = require("../modules/delivery/service");
+const logger = require("../common/utils/logger");
 
 /**
  * Initialize Socket.IO on the given HTTP server.
@@ -55,41 +57,46 @@ function initSocket(httpServer) {
     });
 
     /**
+     * Extracted into a named async function for readability and testability.
+     * Validates lat/lng before passing to the service.
      * 16.2 — Delivery agent emits location update via socket (alternative to HTTP endpoint).
-     * Persists to DB and broadcasts to the order room.
+     * Persists to DB and broadcasts to the customer's personal room.
      * Event: location:update  payload: { order_id, lat, lng }
      */
-    socket.on("location:update", async ({ order_id, lat, lng } = {}) => {
+    async function handleLocationUpdate({ order_id, lat, lng } = {}) {
       if (!order_id || lat == null || lng == null) return;
       if (role !== DELIVERY) return;
 
+      //  Validate coordinates at the socket layer before hitting the service
+      if (typeof lat !== 'number' || lat < -90 || lat > 90) {
+        socket.emit('error', { message: 'Invalid latitude: must be a number between -90 and 90' });
+        return;
+      }
+      if (typeof lng !== 'number' || lng < -180 || lng > 180) {
+        socket.emit('error', { message: 'Invalid longitude: must be a number between -180 and 180' });
+        return;
+      }
+
       try {
-        const tracking = await prisma.deliveryTracking.findUnique({
-          where: { orderId: order_id },
-          include: { order: true },
-        });
-
-        if (!tracking || tracking.riderName !== String(userId)) return;
-
-        // 16.3 — Persist latest rider location
-        await prisma.deliveryTracking.update({
-          where: { orderId: order_id },
-          data: { currentLat: lat, currentLng: lng },
-        });
-
-        // 16.4 — Emit to order-specific room so only the relevant customer receives it
-        io.to(`order:${order_id}`).emit("delivery_location", {
+        // same logic for updateLocation is on modules/delivery/service.js just reusing that function here
+        await deliveryService.updateLocation(
           order_id,
+          userId,
           lat,
           lng,
-        });
+          io
+        );
       } catch (err) {
-        console.error("[Socket] location:update error:", err.message);
+        //  Using Winston logger instead of console.error
+        logger.error(`[Socket] location:update error for order ${order_id}: ${err.message}`, { err });
       }
-    });
+    }
 
+    socket.on("location:update", handleLocationUpdate);
+
+    //  Using Winston logger instead of console.log
     socket.on("disconnect", () => {
-      console.log(`Socket disconnected: ${socket.id} (user: ${userId})`);
+      logger.info(`Socket disconnected: ${socket.id} (user: ${userId})`);
     });
   });
 

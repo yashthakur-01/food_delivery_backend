@@ -6,7 +6,7 @@ const router = express.Router();
 const authenticate = require('../../common/middleware/authenticate');
 const authorize = require('../../common/middleware/authorize');
 const validate = require('../../common/middleware/validate');
-const { createPaymentSchema, verifyPaymentSchema, refundSchema } = require('./validation');
+const { createPaymentSchema, verifyPaymentSchema } = require('./validation');
 const controller = require('./controller');
 
 // Webhook — must use express.raw() to preserve raw body for signature validation
@@ -29,13 +29,6 @@ router.post(
   authenticate, authorize('customer'),
   validate(verifyPaymentSchema),
   controller.verifyPayment
-);
-
-router.post(
-  '/:id/refund',
-  authenticate, authorize('customer'),
-  validate(refundSchema),
-  controller.refund
 );
 
 module.exports = router;

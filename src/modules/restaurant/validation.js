@@ -21,4 +21,5 @@ const updateMenuItemSchema = Joi.object({
   is_available: Joi.boolean(),
 }).min(1); // at least one field required
 
+
 module.exports = { listRestaurantsSchema, addMenuItemSchema, updateMenuItemSchema };
