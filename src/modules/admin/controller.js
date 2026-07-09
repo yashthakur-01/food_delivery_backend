@@ -52,4 +52,32 @@ const getDashboard = async (req, res, next) => {
     next(err);
   }
 };
-module.exports = { approveRestaurant, approveDeliveryAgent, getAnalytics, getDashboard };
+
+const getPendingRestaurants = async (req, res, next) => {
+  try{
+    const pendingRestaurants = await adminService.getPendingRestaurants();
+    return success(res, "Pending restaurants retrieved", pendingRestaurants);
+  }catch (err){
+    next(err);
+  }
+};
+
+const getPendingDeliveryAgents = async (req, res, next) => {
+  try{
+    const pendingAgents = await adminService.getPendingDeliveryAgents();
+    return success(res, "Pending delivery agents retrieved", pendingAgents);
+  }catch (err){
+    next(err);
+  }
+};
+
+const getPendingStores = async (req, res, next) => {
+  try{
+    const pendingStores = await adminService.getPendingStores();
+    return success(res, "Pending stores retrieved", pendingStores);
+  }catch (err){
+    next(err);
+  }
+};
+
+module.exports = { approveRestaurant, approveDeliveryAgent, getAnalytics, getDashboard, approveStore, getPendingRestaurants, getPendingDeliveryAgents, getPendingStores };
