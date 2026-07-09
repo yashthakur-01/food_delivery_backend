@@ -26,7 +26,7 @@ router.post('/:id/menu',               authenticate, authorize('restaurant_owner
 router.patch('/:id/menu/:itemId',      authenticate, authorize('restaurant_owner'), validate(updateMenuItemSchema), controller.updateMenuItem);
 
 // Restaurant owner — replacement requests
-router.get('/replace/:id',             authenticate, authorize('restaurant_owner'), controller.getReplaceOrderRequest);
-router.patch('/replace/:id',           authenticate, authorize('restaurant_owner'), controller.updateReplaceOrderRequest);
+router.get('/order-request/:id',       authenticate, authorize('restaurant_owner'), controller.getOrderRequest);
+router.patch('/order-request/:id',     authenticate, authorize('restaurant_owner'), controller.updateOrderRequest);
 
 module.exports = router;

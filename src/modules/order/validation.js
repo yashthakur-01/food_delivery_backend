@@ -35,10 +35,9 @@ const updateOrderStatusSchema = Joi.object({
     .required(),
 });
 
-const Joi = require("joi");
-
-const replaceOrderSchema = {
+const orderRequestSchema = {
   body: Joi.object({
+    type: Joi.string().valid('REFUND','REPLACE').required(),
     reason: Joi.string().trim().min(5).max(500).required(),
 
     image_url: Joi.string().uri().optional(),
@@ -58,5 +57,5 @@ const replaceOrderSchema = {
 module.exports = {
   createOrderSchema,
   updateOrderStatusSchema,
-  replaceOrderSchema,
+  orderRequestSchema,
 };

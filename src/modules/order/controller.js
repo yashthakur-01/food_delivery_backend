@@ -41,22 +41,22 @@ async function updateOrderStatus(req, res, next) {
   } catch (err) { next(err); }
 }
 
-/**POST /orders/:id/replace */
-async function replaceOrder(req, res, next){
+/**POST /orders/:id/request */
+async function createOrderRequest(req, res, next){
   try{
     const io = req.app.get('io');
 
-    const replacement = await service.replaceOrder(
+    const request = await service.createOrderRequest(
       req.params.id,
       req.user.id,
       req.body,
       io
     );
 
-    return success(res, 'Replace order request created', replacement, 201);
+    return success(res, 'Order request created', request, 201);
   }catch(err){
     next(err);
   }
 }
 
-module.exports = { createOrder, getOrders, cancelOrder, updateOrderStatus, replaceOrder };
+module.exports = { createOrder, getOrders, cancelOrder, updateOrderStatus, createOrderRequest };

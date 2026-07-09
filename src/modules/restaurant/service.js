@@ -3,6 +3,9 @@
 const prisma = require('../../config/db');
 const AppError = require('../../common/utils/AppError');
 const orderService = require('../order/service');
+const paymentService = require('../payment/service');
+const REQUEST_STATUS = require("../../common/constants/OrderRequest")
+const REQUEST_TYPE = require("../../common/constants/requestType")
 
 /** List restaurants with optional category filter and pagination. */
 async function listRestaurants({ page = 1, limit = 20, category } = {}) {
@@ -152,14 +155,9 @@ async function updateMenuItem(restaurantId, itemId, ownerId, data) {
 }
 
 
-/**
- * 
- * @param {*} replacementId 
- * @param {*} ownerId 
- * @returns 
- */
-async function getReplaceOrderRequest(replacementId, ownerId){
-  const replacement = await prisma.replaceOrder.findUnique({
+/** Get a replace order request by ID. */
+async function getOrderRequest(replacementId, ownerId){
+  const replacement = await prisma.orderRequest.findUnique({
     where:{ id: replacementId },
     include:{
       order:{
@@ -184,12 +182,10 @@ async function getReplaceOrderRequest(replacementId, ownerId){
   return replacement;
 }
 
-async function updateReplaceOrderRequest(replacementId, ownerId, status){
-  const replacement = await getReplaceOrderRequest(replacementId, ownerId);
+async function updateOrderRequest(replacementId, ownerId, status){
+  const replacement = await getOrderRequest(replacementId, ownerId);
 
-
-
-  if(status === 'accepted'){
+  if(status === REQUEST_STATUS.ACCEPTED && replacement.type === REQUEST_TYPE.REPLACE){
     const newOrder = await orderService.createOrder(
       replacement.userId,
       {
@@ -200,39 +196,66 @@ async function updateReplaceOrderRequest(replacementId, ownerId, status){
         }))
       },{
         addressLine: replacement.order.deliveryAddress,
-        addressLat: replacement.order.deliveryLat,
-        addressLng: replacement.order.deliveryLng
+        latitude: replacement.order.deliveryLat,
+        longitude: replacement.order.deliveryLng,
+        freeReplacement:true
       }
     );
 
-    await prisma.order.update({
-      where:{ id: newOrder.id },
-      data:{ totalAmount:0 }
-    });
-
-    await prisma.replaceOrder.update({
+    await prisma.orderRequest.update({
       where:{ id: replacementId },
-      data:{ status:'accepted' }
+      data:{ status:REQUEST_STATUS.ACCEPTED }
     });
 
     return newOrder;
   }
 
-  if(status === 'rejected'){
-    // TODO: continue rejection flow
-    return prisma.replaceOrder.update({
+  if(status === REQUEST_STATUS.ACCEPTED && replacement.type === REQUEST_TYPE.REFUND){
+    await paymentService.processRefund(
+      replacement.orderId,
+      replacement.refundAmount
+    );
+
+    return prisma.orderRequest.update({
       where:{ id: replacementId },
-      data:{ status:'rejected' }
+      data:{ status: REQUEST_STATUS.ACCEPTED }
     });
   }
 
-  throw new AppError(400, 'INVALID_STATUS', 'Invalid replacement status');
+  if(status === REQUEST_STATUS.REJECTED){
+
+    const notificationBody = {
+      title: `${replacement.type} Request Rejected`,
+      message: `Your ${replacement.type} request for order #${replacement.orderId} has been rejected by the restaurant. You can contact the restaurant at ${replacement.order.restaurant.phone} for more details`,
+      type: "ORDER_REQUEST_REJECTED"
+    }
+
+    notificationService.sendNotification({
+      userId: replacement.userId,
+      ...notificationBody
+    });
+
+    const notification = await prisma.notification.create({
+      data:{
+        userId: replacement.userId,
+        ...notificationBody,
+        isRead:false
+      }
+    });
+
+    return prisma.orderRequest.update({
+      where:{ id: replacementId },
+      data:{ status:REQUEST_STATUS.REJECTED }
+    });
+  }
+
+  throw new AppError(400, 'INVALID_STATUS', 'Invalid order request status');
 }
 
 module.exports = {
   listRestaurants, searchRestaurants, getSearchHistory, deleteSearchEntry,
   clearSearchHistory, getCategories, getBanners, getRestaurantDetails,
   addMenuItem, updateMenuItem,
-  getReplaceOrderRequest,
-  updateReplaceOrderRequest,
+  getOrderRequest,
+  updateOrderRequest,
 };

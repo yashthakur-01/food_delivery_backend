@@ -303,25 +303,36 @@ model CartItem {
   menuItem MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
 }
 
-model OrderReplacement {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+
+model OrderRequest {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
 
   // Relations
-  orderId   String   @db.ObjectId
-  userId    String   @db.ObjectId
+  orderId   String @db.ObjectId
+  userId    String @db.ObjectId
 
-  // Replacement details
+  // refund | replacement
+  type      String
+
+  // Customer complaint
   reason    String
   imageUrl  String?
 
-  // Snapshot before replacement
-  oldItems  Json
+  // Replacement specific
+  oldItems Json?
+  newItems Json?
 
-  // Requested replacement items
-  newItems  Json
+  // Refund specific
+  refundAmount Float?
+  refundReference String?
+  razorpayRefundId String?
 
-  // Workflow status
-  status    String   @default("pending")
+  // Restaurant decision
+  status String @default("pending")
+  // pending | approved | rejected | completed
+
+  restaurantResponse String?
+  verifiedAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -333,4 +344,3 @@ model OrderReplacement {
     onDelete: Cascade
   )
 }
-

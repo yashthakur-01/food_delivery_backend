@@ -93,21 +93,21 @@ async function updateMenuItem(req, res, next) {
 }
 
 /** GET /restaurants/replace/:id */
-async function getReplaceOrderRequest(req, res, next){
+async function getOrderRequest(req, res, next){
   try{
-    const replacement = await service.getReplaceOrderRequest(req.params.id, req.user.id);
-    return success(res, 'Replacement request retrieved', replacement);
+    const request = await service.getOrderRequest(req.params.id, req.user.id);
+    return success(res, 'Order request retrieved', request);
   }catch(err){ next(err); }
 }
 
-async function updateReplaceOrderRequest(req,res,next){
+async function updateOrderRequest(req,res,next){
   try{
-    const result = await service.updateReplaceOrderRequest(
+    const result = await service.updateOrderRequest(
       req.params.id,
       req.user.id,
       req.body.status
     );
-    return success(res, 'Replacement request updated', result);
+    return success(res, 'Order request updated', result);
   }catch(err){ next(err); }
 }
 
@@ -115,6 +115,6 @@ module.exports = {
   listRestaurants, getCategories, getBanners, searchRestaurants,
   getSearchHistory, deleteSearchEntry, clearSearchHistory,
   getRestaurantDetails, addMenuItem, updateMenuItem,
-  getReplaceOrderRequest,
-  updateReplaceOrderRequest,
+  getOrderRequest,
+  updateOrderRequest,
 };

@@ -4,7 +4,8 @@ const prisma = require('../../config/db');
 const AppError = require('../../common/utils/AppError');
 const ORDER_STATUS = require('../../common/constants/orderStatus');
 const notificationService = require('../notification/service');
-const REPLACE_ORDER_STATUS = require('../../common/constants/replaceOrderStatus');
+const REQUEST_STATUS = require('../../common/constants/OrderRequest');
+const REQUEST_TYPE = require("../../common/constants/requestType")
 
 const VALID_TRANSITIONS = {
   [ORDER_STATUS.PENDING]:          [ORDER_STATUS.CONFIRMED, ORDER_STATUS.CANCELLED],
@@ -20,7 +21,7 @@ const CANCELLABLE_STATUSES = [ORDER_STATUS.PENDING, ORDER_STATUS.CONFIRMED];
 /**
  * Create a new order.
  */
-async function createOrder(customerId, { restaurant_id, address_id, items }, additionalData = {addressLine, addressLat, addressLng}) {
+async function createOrder(customerId, { restaurant_id, address_id, items }, additionalData = null) {
   const menuItemIds = items.map((i) => i.menu_item_id);
   
   let address;
@@ -31,7 +32,7 @@ async function createOrder(customerId, { restaurant_id, address_id, items }, add
     }
   }
 
-  if (!address && (additionalData.addressLine && additionalData.addressLat && additionalData.addressLng)) {
+  if (!address && additionalData?.addressLine) {
     address = additionalData;
   }
 
@@ -45,9 +46,9 @@ async function createOrder(customerId, { restaurant_id, address_id, items }, add
   }
 
   const priceMap = Object.fromEntries(menuItems.map((m) => [m.id, m.price]));
-  const total = items.reduce((sum, item) => sum + priceMap[item.menu_item_id] * item.quantity, 0);
+  const total = additionalData?.freeReplacement ? 0 : items.reduce((sum, item) => sum + priceMap[item.menu_item_id] * item.quantity, 0);
 
-  const deliveryAddress = address?.addressLat?? "" + address.line1 + " " + address.line2 + " " + address.city + " " + address.state + " " + address.zipCode;
+  const deliveryAddress = address.addressLine ?? `${address.line1} ${address.line2 ?? ''} ${address.city ?? ''} ${address.state ?? ''} ${address.pincode ?? ''}`;
 
   const order = await prisma.order.create({
     data: {
@@ -157,7 +158,7 @@ async function updateOrderStatus(orderId, newStatus, io) {
   return updated;
 }
 
-async function replaceOrder(orderId, customerId, { reason, image_url, items }, io){
+async function createOrderRequest(orderId, customerId, { type, reason, image_url, items }, io){
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     include: { items: true }
@@ -170,7 +171,7 @@ async function replaceOrder(orderId, customerId, { reason, image_url, items }, i
   }
 
   if(order.status !== ORDER_STATUS.DELIVERED){
-    throw new AppError(400, 'INVALID_STATUS', 'Only delivered orders can be replaced');
+    throw new AppError(400, 'INVALID_STATUS', 'Only delivered orders can have refund/replacement requests');
   }
 
   const restaurantId = order.restaurantId;
@@ -178,7 +179,7 @@ async function replaceOrder(orderId, customerId, { reason, image_url, items }, i
   const restaurant = await prisma.restaurant.findUnique({ where: { id: restaurantId } });
 
   if(restaurant.isOpen === false){
-    throw new AppError(400, 'RESTAURANT_CLOSED', 'Cannot request replacement. The restaurant is closed');
+    throw new AppError(400, 'RESTAURANT_CLOSED', 'Cannot create order request. The restaurant is closed');
   }
   const menuItemIds = items.map((item) => item.menu_item_id);
 
@@ -190,7 +191,7 @@ async function replaceOrder(orderId, customerId, { reason, image_url, items }, i
   });
 
   if(menuItems.length !== menuItemIds.length){
-    throw new AppError(400, 'INVALID_ITEMS', 'Invalid replacement items');
+    throw new AppError(400, 'INVALID_ITEMS', 'Invalid request items');
   }
 
   const priceMap = Object.fromEntries(menuItems.map((item) => [item.id, item.price]));
@@ -201,22 +202,28 @@ async function replaceOrder(orderId, customerId, { reason, image_url, items }, i
     price: priceMap[item.menu_item_id]
   }));
 
-  const replaceOrderRecord = await prisma.replaceOrder.create({
+  const refundAmount = type === REQUEST_TYPE.REFUND
+    ? replaceOrderItems.reduce((sum,item)=>sum+(item.price*item.quantity),0)
+    : null;
+
+  const replaceOrderRecord = await prisma.orderRequest.create({
     data: {
       orderId,
       userId: customerId,
       reason,
       imageUrl: image_url,
       oldItems: order.items,
-      newItems: replaceOrderItems,
-      status: REPLACE_ORDER_STATUS.PENDING
+      newItems: type === REQUEST_TYPE.REPLACE ? replaceOrderItems : null,
+      refundAmount,
+      status: REQUEST_STATUS.PENDING,
+      type
     }
   });
 
   const notification = {
-    title: 'New Replace Order Request',
-    message: `A new replace order request has been made for order #${orderId}.`,
-    type: 'replace_order_request'
+    title: 'New Order Request',
+    message: `A new ${type} request has been made for order #${orderId}.`,
+    type: 'order_request'
   }
 
   await notificationService.createNotification({...notification, userId: restaurant.ownerId});
@@ -224,9 +231,9 @@ async function replaceOrder(orderId, customerId, { reason, image_url, items }, i
   await notificationService.sendPushNotification({...notification, userId: restaurant.ownerId});
 
   if(io){
-    io.to(`restaurant:${order.restaurantId}`).emit('replace_order_request', {
+    io.to(`restaurant:${order.restaurantId}`).emit('order_request', {
       order_id: orderId,
-      replacement_id: replaceOrderRecord.id,
+      request_id: replaceOrderRecord.id,
       reason,
       image_url,
       items: replaceOrderItems
@@ -236,4 +243,4 @@ async function replaceOrder(orderId, customerId, { reason, image_url, items }, i
   return replaceOrderRecord;
 }
 
-module.exports = { createOrder, cancelOrder, getOrders, updateOrderStatus, replaceOrder };
+module.exports = { createOrder, cancelOrder, getOrders, updateOrderStatus, createOrderRequest };
