@@ -4144,3 +4144,33 @@ Inconsistent column data: Malformed ObjectID: provided hex string representation
     at next (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\route.js:157:13)
 2026-07-10T13:17:45.602Z [INFO]: [jobs] Starting background jobs...
 2026-07-10T13:17:45.624Z [INFO]: [otpCleanup] Scheduled to run every 10 minutes
+2026-07-10T13:44:44.363Z [INFO]: [jobs] Starting background jobs...
+2026-07-10T13:44:44.387Z [INFO]: [otpCleanup] Scheduled to run every 10 minutes
+2026-07-10T13:45:46.311Z [INFO]: [jobs] Starting background jobs...
+2026-07-10T13:45:46.324Z [INFO]: [otpCleanup] Scheduled to run every 10 minutes
+2026-07-10T13:46:27.902Z [INFO]: [jobs] Starting background jobs...
+2026-07-10T13:46:27.923Z [INFO]: [otpCleanup] Scheduled to run every 10 minutes
+2026-07-10T13:47:08.194Z [ERROR]: TypeError: Cannot read properties of undefined (reading 'findFirst')
+    at Object.createStore (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\grocery\service.js:7:51)
+    at createStore (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\grocery\controller.js:8:33)
+    at Layer.handleRequest (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\route.js:157:13)
+    at C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\common\middleware\validate.js:16:7
+    at Layer.handleRequest (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\route.js:157:13)
+    at C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\common\middleware\authorize.js:17:7
+    at Layer.handleRequest (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\route.js:157:13)
+2026-07-10T13:53:59.261Z [INFO]: [jobs] Starting background jobs...
+2026-07-10T13:53:59.264Z [INFO]: [otpCleanup] Scheduled to run every 10 minutes
+2026-07-10T13:54:23.307Z [ERROR]: TypeError: Cannot read properties of undefined (reading 'findFirst')
+    at Object.createStore (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\grocery\service.js:7:51)
+    at createStore (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\grocery\controller.js:8:33)
+    at Layer.handleRequest (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\route.js:157:13)
+    at C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\common\middleware\validate.js:16:7
+    at Layer.handleRequest (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\route.js:157:13)
+    at C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\common\middleware\authorize.js:17:7
+    at Layer.handleRequest (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\route.js:157:13)
