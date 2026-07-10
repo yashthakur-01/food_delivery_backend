@@ -6,6 +6,7 @@ const orderRoutes = require("./src/modules/order/routes");
 const deliveryRoutes = require("./src/modules/delivery/routes");
 const cartRoutes = require("./src/modules/cart/routes");
 const vendorRoutes = require("./src/modules/vendor/routes");
+const groceryRoutes = require('./src/modules/grocery/routes');
 const express = require("express");
 const http = require("http");
 const morgan = require("morgan");
@@ -74,6 +75,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/vendor", vendorRoutes);
 
+app.use("/api/grocery", groceryRoutes);
 app.set('io', io);
 
 app.use(errorHandler);

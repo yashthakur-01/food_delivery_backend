@@ -4,7 +4,7 @@ const Joi = require('joi');
 const roles = require('../../common/constants/roles');
 
 // Roles allowed to self-register (admin is created out-of-band)
-const REGISTERABLE_ROLES = [roles.CUSTOMER, roles.RESTAURANT_OWNER, roles.DELIVERY];
+const REGISTERABLE_ROLES = [roles.CUSTOMER, roles.RESTAURANT_OWNER, roles.DELIVERY, roles.SELLER]; // generic seller: grocery, clothing, electronics, etc.
 
 const registerSchema = Joi.object({
   name:     Joi.string().trim().min(1).max(100).required(),

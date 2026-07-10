@@ -1,0 +1,40 @@
+$kind: http-request
+name: Create Store Profile
+url: "{{base_url}}/api/grocery/store/profile"
+method: POST
+headers:
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTBmMTA1ZDA1NzVlMjU4YTA5NDg3NCIsInBob25lIjoiKzkxOTg3NjU0MzIxMSIsImVtYWlsIjoic2VsbGVyQGV4YW1wbGUuY29tIiwicm9sZSI6InNlbGxlciIsImlzX3ZlcmlmaWVkIjp0cnVlLCJ0b2tlbklkIjoiMDkzNWVlODQtM2RmOS00YjE2LWFjZjktMmIzMmIxZTQ1YWU5IiwiaWF0IjoxNzgzNjg5NzkyLCJleHAiOjE3ODM2OTA2OTJ9.42BSS3GMEMdHVj8068m2Fuz8WUxwP3EsBJC1Aj72Kzc
+body:
+  type: json
+  content: "{\r
+
+    \  \"name\": \"Fresh Mart\",\r
+
+    \  \"description\": \"Daily groceries and household essentials\",\r
+
+    \  \"address\": \"Lajpat Nagar, Delhi\",\r
+
+    \  \"email\": \"freshmart@example.com\",\r
+
+    \  \"phone\": \"+919876543210\",\r
+
+    \  \"storeType\": \"GROCERY\",\r
+
+    \  \"category\": \"Supermarket\",\r
+
+    \  \"deliveryFee\": 30,\r
+
+    \  \"minOrderAmount\": 200,\r
+
+    \  \"latitude\": 28.5677,\r
+
+    \  \"longitude\": 77.2433,\r
+
+    \  \"isOpen\": true,\r
+
+    \  \"offerTag\": \"10% OFF\"\r
+
+    }"
+auth:
+  type: noauth
+order: 1783688388879

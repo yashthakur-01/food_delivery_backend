@@ -1,0 +1,20 @@
+$kind: http-request
+name: Register Grocery Seller
+url: "{{base_url}}/api/auth/register"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"name\": \"Fresh Mart Seller\",\r
+
+    \  \"email\": \"seller@example.com\",\r
+
+    \  \"phone\": \"+919876543211\",\r
+
+    \  \"password\": \"Password123!\",\r
+
+    \  \"role\": \"seller\"\r
+
+    }"
+order: 1076905858047416

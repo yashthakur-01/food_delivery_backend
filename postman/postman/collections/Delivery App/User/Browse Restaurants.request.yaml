@@ -1,4 +1,5 @@
 $kind: http-request
-url: ""
+name: Browse Restaurants
+url: "{{base_url}}/api/restaurants"
 method: GET
 order: 1360219836782729

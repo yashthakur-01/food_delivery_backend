@@ -2,4 +2,6 @@ $kind: http-request
 name: Dashboard
 url: "{{base_url}}/api/admin/dashboard"
 method: GET
+headers:
+  Authorization: "Bearer "
 order: 851461703469440

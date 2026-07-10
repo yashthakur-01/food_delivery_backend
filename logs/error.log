@@ -3980,3 +3980,14 @@ Validation Error Count: 1
     at _issueTokens (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\auth\service.js:92:23)
     at Object.loginWithPassword (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\auth\service.js:121:10)
     at async loginWithPassword (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\auth\controller.js:25:20)
+2026-07-10T13:14:00.279Z [ERROR]: TypeError: Cannot destructure property 'name' of 'undefined' as it is undefined.
+    at Object.register (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\auth\service.js:26:27)
+    at register (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\auth\controller.js:9:32)
+    at Layer.handleRequest (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\route.js:157:13)
+    at C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\common\middleware\validate.js:16:7
+    at Layer.handleRequest (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\route.js:157:13)
+    at rateLimiter (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\common\middleware\rateLimiter.js:2:3)
+    at Layer.handleRequest (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\route.js:157:13)
