@@ -4174,3 +4174,5 @@ Inconsistent column data: Malformed ObjectID: provided hex string representation
     at C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\common\middleware\authorize.js:17:7
     at Layer.handleRequest (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\layer.js:152:17)
     at next (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\route.js:157:13)
+2026-07-10T14:50:43.441Z [INFO]: [jobs] Starting background jobs...
+2026-07-10T14:50:43.446Z [INFO]: [otpCleanup] Scheduled to run every 10 minutes
