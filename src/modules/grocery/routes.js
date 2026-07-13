@@ -15,7 +15,8 @@ const {
   createStoreSchema,
   updateStoreSchema,
   createProductSchema,
-  updateProductSchema
+  updateProductSchema,
+  updateStockSchema
 } = require('./validation');
 
 const router = Router();

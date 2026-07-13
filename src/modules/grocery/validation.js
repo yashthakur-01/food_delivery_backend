@@ -2,6 +2,7 @@
 
 const Joi = require('joi');
 
+// Store - POST /api/grocery/stores
 const createStoreSchema = Joi.object({
   name: Joi.string().trim().min(2).max(150).required(),
   description: Joi.string().trim().max(1000).optional(),
@@ -23,6 +24,7 @@ const createStoreSchema = Joi.object({
   workingHours: Joi.object().optional(),
 });
 
+//PUT - /api/grocery/stores/:storeId
 const updateStoreSchema = Joi.object({
   name: Joi.string().trim().min(2).max(150).optional(),
   description: Joi.string().trim().max(1000).optional(),
@@ -76,10 +78,40 @@ const updateProductSchema = Joi.object({
 }).min(1);
 
 //stockschema is required !!!!!!! here
+// PATCH - /api/grocery/products/:id/stock -> this will update the stock level
+const updateStockSchema = Joi.object({
+  stock: Joi.number().integer().min(0).required(),
+});
+
+// GET - /api/grocery/stores -> this is for listing the stores
+const listStoresSchema = Joi.object({
+  page:     Joi.number().integer().min(1).default(1),
+  limit:    Joi.number().integer().min(1).max(100).default(20),
+  category: Joi.string().trim().optional(),
+});
+
+// GET /api/grocery/stores/:id/products — this is for listing the products
+const listProductsSchema = Joi.object({
+  page:          Joi.number().integer().min(1).default(1),
+  limit:         Joi.number().integer().min(1).max(100).default(20),
+  category:      Joi.string().trim().optional(),
+  availableOnly: Joi.boolean().optional(),
+});
+
+// GET /api/grocery/products/search — for searching products 
+const searchProductsSchema = Joi.object({
+  q:     Joi.string().trim().min(1).required(),
+  page:  Joi.number().integer().min(1).default(1),
+  limit: Joi.number().integer().min(1).max(100).default(20),
+});
 
 module.exports = {
   createStoreSchema,
   updateStoreSchema,
   createProductSchema,
   updateProductSchema,
+  updateStockSchema,
+  listStoresSchema,
+  listProductsSchema,
+  searchProductsSchema,
 };
