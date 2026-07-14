@@ -34,6 +34,31 @@ router.put(
   ...sellerGuard,
   controller.updateStore
 );
+ // GET /api/grocery/stores
+router.get(
+    '/stores',
+    controller.listStores
+);
+
+// GET /api/grocery/stores/:id
+router.get(
+    '/stores/:id',
+    controller.getStore
+);
+
+// GET /api/grocery/seller/store
+router.get(
+    '/seller/store',
+    ...sellerGuard,
+    controller.getSellerStore
+);
+
+// PATCH /api/grocery/stores/:storeId/toggle-open
+router.patch(
+    '/stores/:storeId/toggle-open',
+    ...sellerGuard,
+    controller.toggleStoreOpen
+);
 
 // POST   /api/grocery/products
 router.post(
@@ -62,6 +87,32 @@ router.delete(
   '/products/:id',
   ...sellerGuard,
   controller.deleteProduct
+);
+
+// GET /api/grocery/stores/:id/products
+router.get(
+    '/stores/:id/products',
+    controller.listStoreProducts
+);
+
+// GET /api/grocery/products/search
+router.get(
+    '/products/search',
+    controller.searchProducts
+);
+
+// GET /api/grocery/products/:id
+router.get(
+    '/products/:id',
+    controller.getProduct
+);
+
+// PATCH /api/grocery/products/:id/stock
+router.patch(
+    '/products/:id/stock',
+    ...sellerGuard,
+    validate(updateStockSchema),
+    controller.updateStock
 );
 
 module.exports = router;
