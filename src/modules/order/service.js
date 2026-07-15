@@ -19,7 +19,18 @@ const VALID_TRANSITIONS = {
 const CANCELLABLE_STATUSES = [ORDER_STATUS.PENDING, ORDER_STATUS.CONFIRMED];
 
 /**
- * Create a new order.
+ * Create a new order for a customer.
+ * Supports both restaurants and grocery stores by validating items against the respective store.
+ *
+ * @param {string} customerId - The ID of the customer placing the order.
+ * @param {Object} payload - The order payload.
+ * @param {string} payload.store_id - The ID of the store or restaurant.
+ * @param {string} [payload.address_id] - The ID of the saved address to deliver to.
+ * @param {Array} payload.items - Array of items to order [{ item_id, quantity }].
+ * @param {string} payload.store_type - The type of store ('restaurant' or 'grocery').
+ * @param {Object} [additionalData=null] - Optional additional data for address or free replacement overrides.
+ * @returns {Promise<Object>} The newly created order record.
+ * @throws {AppError} If the address is invalid or items do not belong to the store.
  */
 async function createOrder(customerId, { store_id, address_id, items, store_type }, additionalData = null) {
   const itemIds = items.map((i) => i.item_id);
@@ -99,7 +110,13 @@ async function createOrder(customerId, { store_id, address_id, items, store_type
 }
 
 /**
- * Cancel an order. Only allowed from PENDING or CONFIRMED statuses.
+ * Cancel an order. 
+ * Can only be cancelled if the order is currently in a PENDING or CONFIRMED status.
+ *
+ * @param {string} orderId - The ID of the order to cancel.
+ * @param {string} customerId - The ID of the customer who owns the order.
+ * @returns {Promise<Object>} The updated order record.
+ * @throws {AppError} 404 if not found, 403 if unauthorized, 400 if the order is in an uncancellable state.
  */
 async function cancelOrder(orderId, customerId) {
   const order = await prisma.order.findUnique({ where: { id: orderId } });
@@ -117,9 +134,16 @@ async function cancelOrder(orderId, customerId) {
 }
 
 /**
- * Get paginated orders scoped to the requesting customer.
- * tab: 'active' returns pending/confirmed/preparing/out_for_delivery
- * tab: 'past' returns delivered/cancelled
+ * Retrieve a paginated list of orders for a specific customer.
+ * Can be filtered by active/past tabs and the type of store (restaurant/grocery).
+ *
+ * @param {string} customerId - The ID of the customer.
+ * @param {Object} options - Query options.
+ * @param {number} [options.page=1] - The page number for pagination.
+ * @param {number} [options.limit=20] - The number of records per page.
+ * @param {string} [options.tab] - Filter by 'active' or 'past' statuses.
+ * @param {string} [options.type] - Filter by store type ('restaurant' or 'grocery') to include specific relation details.
+ * @returns {Promise<Object>} An object containing the orders array, total count, page, and limit.
  */
 async function getOrders(customerId, { page = 1, limit = 20, tab, type } = {}) {
   const skip = (page - 1) * limit;
@@ -158,8 +182,14 @@ async function getOrders(customerId, { page = 1, limit = 20, tab, type } = {}) {
 }
 
 /**
- * Update order status with state machine validation.
- * Also emits socket events: order_status_update to customer, new_delivery_request to delivery_agents on CONFIRMED.
+ * Safely update the status of an order using strict state machine validation.
+ * Automatically broadcasts socket events to relevant parties (customers, delivery agents).
+ *
+ * @param {string} orderId - The ID of the order to update.
+ * @param {string} newStatus - The new status to transition to.
+ * @param {Object} [io] - The Socket.io instance for emitting real-time events.
+ * @returns {Promise<Object>} The updated order record.
+ * @throws {AppError} 404 if not found, 400 if the transition is invalid based on VALID_TRANSITIONS.
  */
 async function updateOrderStatus(orderId, newStatus, io) {
   const order = await prisma.order.findUnique({ where: { id: orderId } });
@@ -193,6 +223,22 @@ async function updateOrderStatus(orderId, newStatus, io) {
   return updated;
 }
 
+/**
+ * Submit a refund or replacement request for a delivered order.
+ * Validates the items against the store and sends notifications/socket events to the store owner.
+ *
+ * @param {string} orderId - The ID of the order being disputed.
+ * @param {string} customerId - The ID of the customer making the request.
+ * @param {Object} payload - The request details.
+ * @param {string} payload.type - The type of request ('refund' or 'replacement').
+ * @param {string} payload.store_type - The type of store ('restaurant' or 'grocery').
+ * @param {string} payload.reason - The reason for the request.
+ * @param {string} [payload.image_url] - Optional proof image URL.
+ * @param {Array} payload.items - Array of items to request action on [{ item_id, quantity }].
+ * @param {Object} [io] - The Socket.io instance for emitting real-time events to the seller.
+ * @returns {Promise<Object>} The newly created order request record.
+ * @throws {AppError} 400 if the store is closed, items are invalid, or the order isn't delivered yet.
+ */
 async function createOrderRequest(orderId, customerId, { type, store_type, reason, image_url, items }, io){
   const order = await prisma.order.findUnique({
     where: { id: orderId },
