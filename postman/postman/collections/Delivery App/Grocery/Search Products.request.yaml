@@ -1,0 +1,7 @@
+$kind: http-request
+name: Search Products
+url: "{{base_url}} /api/grocery/stores/products/search?q=milk"
+method: GET
+queryParams:
+  q: milk
+order: 4438371533416753
