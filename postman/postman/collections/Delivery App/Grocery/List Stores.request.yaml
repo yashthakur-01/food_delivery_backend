@@ -1,0 +1,7 @@
+$kind: http-request
+name: List Stores
+url: "{{base_url}}/api/grocery/stores/?category=Supermarket"
+method: GET
+queryParams:
+  category: Supermarket
+order: 4497851012161685

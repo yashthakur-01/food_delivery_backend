@@ -4013,3 +4013,33 @@ Validation Error Count: 1
     at C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\common\middleware\authorize.js:17:7
     at Layer.handleRequest (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\layer.js:152:17)
     at next (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\router\lib\route.js:157:13)
+2026-07-14T10:03:23.509Z [ERROR]: PrismaClientKnownRequestError: 
+Invalid `prisma.groceryProduct.findUnique()` invocation in
+C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\grocery\service.js:173:47
+
+  170 
+  171 // getting the products here GET - /api/grocery/products/:id
+  172 async function getProduct(productId) {
+→ 173   const product = await prisma.groceryProduct.findUnique(
+Inconsistent column data: Malformed ObjectID: provided hex string representation must be exactly 12 bytes, instead got: "{productId}", length 11.
+    at ei.handleRequestError (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:7268)
+    at ei.handleAndLogRequestError (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async Object.getProduct (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\grocery\service.js:173:19)
+    at async getProduct (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\grocery\controller.js:143:21)
+2026-07-14T10:11:50.379Z [ERROR]: PrismaClientKnownRequestError: 
+Invalid `prisma.groceryProduct.findUnique()` invocation in
+C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\grocery\service.js:198:47
+
+  195 
+  196 //updateProduct PATCH - /api/grocery/procuts/:id
+  197 async function updateProduct(productId, ownerId, data) {
+→ 198   const product = await prisma.groceryProduct.findUnique(
+Inconsistent column data: Malformed ObjectID: provided hex string representation must be exactly 12 bytes, instead got: "{productId}", length 11.
+    at ei.handleRequestError (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:7268)
+    at ei.handleAndLogRequestError (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async Object.updateProduct (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\grocery\service.js:198:19)
+    at async updateProduct (C:\Users\isura\Desktop\SMRL-backend\food_delivery_backend\src\modules\grocery\controller.js:93:21)
