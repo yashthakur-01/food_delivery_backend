@@ -108,7 +108,8 @@ model Order {
   id              String   @id @default(auto()) @map("_id") @db.ObjectId
   orderNumber     String?
   userId          String   @db.ObjectId
-  restaurantId    String   @db.ObjectId
+  restaurantId    String?  @db.ObjectId
+  storeId         String?  @db.ObjectId
   status          String
   totalAmount     Float
   deliveryAddress String?
@@ -119,7 +120,8 @@ model Order {
   updatedAt       DateTime @updatedAt
 
   user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  restaurant    Restaurant        @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  restaurant    Restaurant?       @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  store         Store?            @relation(fields: [storeId], references: [id], onDelete: Cascade)
   items         OrderItem[]
   payment       Payment?
   tracking      DeliveryTracking?
@@ -127,14 +129,16 @@ model Order {
 }
 
 model OrderItem {
-  id         String @id @default(auto()) @map("_id") @db.ObjectId
-  orderId    String @db.ObjectId
-  menuItemId String @db.ObjectId
-  quantity   Int
-  price      Float
+  id               String  @id @default(auto()) @map("_id") @db.ObjectId
+  orderId          String  @db.ObjectId
+  menuItemId       String? @db.ObjectId
+  groceryProductId String? @db.ObjectId
+  quantity         Int
+  price            Float
 
-  order    Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  menuItem MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  order          Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItem       MenuItem?       @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  groceryProduct GroceryProduct? @relation(fields: [groceryProductId], references: [id], onDelete: Cascade)
 }
 
 model Payment {
@@ -285,6 +289,7 @@ model Cart {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   userId       String   @unique @db.ObjectId
   restaurantId String?  @db.ObjectId
+  storeId      String?  @db.ObjectId
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -295,13 +300,15 @@ model Cart {
 model CartItem {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   cartId     String   @db.ObjectId
-  menuItemId String   @db.ObjectId
+  menuItemId String?  @db.ObjectId
+  groceryProductId String? @db.ObjectId
   quantity   Int
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   cart     Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  menuItem MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  menuItem MenuItem? @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  groceryProduct GroceryProduct? @relation(fields: [groceryProductId], references: [id], onDelete: Cascade)
 }
 
 model OrderRequest {
@@ -331,8 +338,8 @@ model OrderRequest {
   status String @default("pending")
   // pending | approved | rejected | completed
 
-  restaurantResponse String?
-  verifiedAt         DateTime?
+  sellerResponse String?
+  verifiedAt     DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -371,6 +378,7 @@ model Store {
   updatedAt      DateTime @updatedAt
 
   products GroceryProduct[]
+  orders   Order[]
 }
 
 model GroceryProduct {
@@ -393,5 +401,7 @@ model GroceryProduct {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  store GroceryStore @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  store      Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+  cartItems  CartItem[]
 }

@@ -14,11 +14,12 @@ async function createOrder(req, res, next) {
 /** GET /orders */
 async function getOrders(req, res, next) {
   try {
-    const { page, limit, tab } = req.query;
+    const { page, limit, tab, type } = req.query;
     const result = await service.getOrders(req.user.id, {
       page: page ? parseInt(page, 10) : 1,
       limit: limit ? parseInt(limit, 10) : 20,
       tab,
+      type
     });
     return success(res, 'Orders retrieved', result);
   } catch (err) { next(err); }

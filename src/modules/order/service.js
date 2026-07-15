@@ -21,8 +21,8 @@ const CANCELLABLE_STATUSES = [ORDER_STATUS.PENDING, ORDER_STATUS.CONFIRMED];
 /**
  * Create a new order.
  */
-async function createOrder(customerId, { restaurant_id, address_id, items }, additionalData = null) {
-  const menuItemIds = items.map((i) => i.menu_item_id);
+async function createOrder(customerId, { store_id, address_id, items, store_type }, additionalData = null) {
+  const itemIds = items.map((i) => i.item_id);
   
   let address;
   if(address_id){
@@ -36,37 +36,62 @@ async function createOrder(customerId, { restaurant_id, address_id, items }, add
     address = additionalData;
   }
 
-  // Fetch all requested menu items that belong to the restaurant
-  const menuItems = await prisma.menuItem.findMany({
-    where: { id: { in: menuItemIds }, restaurantId: restaurant_id },
-  });
+  let menuItems;
+  if(store_type=="restaurant"){
+    menuItems = await prisma.menuItem.findMany({
+      where: { id: { in: itemIds }, restaurantId: store_id },
+    });
+  }else if(store_type=="grocery"){
+    menuItems = await prisma.groceryProduct.findMany({
+      where: { id: { in: itemIds }, storeId: store_id },
+    });
+  }
 
-  if (menuItems.length !== menuItemIds.length) {
-    throw new AppError(400, 'INVALID_ITEMS', 'One or more items do not belong to the specified restaurant');
+  // Fetch all requested menu items that belong to the restaurant
+
+  if (menuItems.length !== itemIds.length) {
+    throw new AppError(400, 'INVALID_ITEMS', 'One or more items do not belong to the specified store');
   }
 
   const priceMap = Object.fromEntries(menuItems.map((m) => [m.id, m.price]));
-  const total = additionalData?.freeReplacement ? 0 : items.reduce((sum, item) => sum + priceMap[item.menu_item_id] * item.quantity, 0);
+  const total = additionalData?.freeReplacement ? 0 : items.reduce((sum, item) => sum + priceMap[item.item_id] * item.quantity, 0);
 
   const deliveryAddress = address.addressLine ?? `${address.line1} ${address.line2 ?? ''} ${address.city ?? ''} ${address.state ?? ''} ${address.pincode ?? ''}`;
 
+  const orderBody = {
+    userId: customerId,
+    status: ORDER_STATUS.PENDING,
+    totalAmount: total,
+    deliveryAddress,
+    deliveryLat: address.latitude,
+    deliveryLng: address.longitude,
+  }
+  if (store_type == "restaurant") {
+    orderBody.restaurantId = store_id;
+  } else if (store_type == "grocery") {
+    orderBody.storeId = store_id;
+  }
+  let itemList = {}
+  if(store_type=="restaurant"){
+    itemList = {
+      create: items.map((item) => ({
+        menuItemId: item.item_id,
+        quantity: item.quantity,
+        price: priceMap[item.item_id],
+      }))
+    }
+  }else if(store_type=="grocery"){
+    itemList = {
+      create: items.map((item) => ({
+        groceryProductId: item.item_id,
+        quantity: item.quantity,
+        price: priceMap[item.item_id],
+      }))
+    }
+  }
+
   const order = await prisma.order.create({
-    data: {
-      userId: customerId,
-      restaurantId: restaurant_id,
-      status: ORDER_STATUS.PENDING,
-      totalAmount: total,
-      deliveryAddress,
-      deliveryLat: address.latitude,
-      deliveryLng: address.longitude,
-      items: {
-        create: items.map((item) => ({
-          menuItemId: item.menu_item_id,
-          quantity: item.quantity,
-          price: priceMap[item.menu_item_id],
-        })),
-      },
-    },
+    data: {...orderBody, items: itemList},
     include: { items: true },
   });
 
@@ -96,7 +121,7 @@ async function cancelOrder(orderId, customerId) {
  * tab: 'active' returns pending/confirmed/preparing/out_for_delivery
  * tab: 'past' returns delivered/cancelled
  */
-async function getOrders(customerId, { page = 1, limit = 20, tab } = {}) {
+async function getOrders(customerId, { page = 1, limit = 20, tab, type } = {}) {
   const skip = (page - 1) * limit;
 
   const ACTIVE_STATUSES = [ORDER_STATUS.PENDING, ORDER_STATUS.CONFIRMED, ORDER_STATUS.PREPARING, ORDER_STATUS.OUT_FOR_DELIVERY];
@@ -106,16 +131,26 @@ async function getOrders(customerId, { page = 1, limit = 20, tab } = {}) {
   if (tab === 'active') where.status = { in: ACTIVE_STATUSES };
   else if (tab === 'past') where.status = { in: PAST_STATUSES };
 
+  let orderBody = {}
+  if(type=='restaurant'){
+    orderBody.include = {
+      items: { include: { menuItem: { select: { name: true, imageUrl: true } } } },
+      restaurant: { select: { id: true, name: true, imageUrl: true } },
+    }
+  }else if(type=='grocery'){
+    orderBody.include = {
+      items: { include: { groceryProduct: { select: { name: true, imageUrl: true } } } },
+      store: { select: { id: true, name: true, imageUrl: true } },
+    }
+  }
+
   const [orders, total] = await Promise.all([
     prisma.order.findMany({
       where,
       skip,
       take: limit,
       orderBy: { createdAt: 'desc' },
-      include: {
-        items: { include: { menuItem: { select: { name: true, imageUrl: true } } } },
-        restaurant: { select: { id: true, name: true, imageUrl: true } },
-      },
+      ...orderBody
     }),
     prisma.order.count({ where }),
   ]);
@@ -158,7 +193,7 @@ async function updateOrderStatus(orderId, newStatus, io) {
   return updated;
 }
 
-async function createOrderRequest(orderId, customerId, { type, reason, image_url, items }, io){
+async function createOrderRequest(orderId, customerId, { type, store_type, reason, image_url, items }, io){
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     include: { items: true }
@@ -174,32 +209,43 @@ async function createOrderRequest(orderId, customerId, { type, reason, image_url
     throw new AppError(400, 'INVALID_STATUS', 'Only delivered orders can have refund/replacement requests');
   }
 
-  const restaurantId = order.restaurantId;
-
-  const restaurant = await prisma.restaurant.findUnique({ where: { id: restaurantId } });
-
-  if(restaurant.isOpen === false){
-    throw new AppError(400, 'RESTAURANT_CLOSED', 'Cannot create order request. The restaurant is closed');
+  let ownerId;
+  let sellerId;
+  if (store_type === 'restaurant') {
+    sellerId = order.restaurantId;
+    const restaurant = await prisma.restaurant.findUnique({ where: { id: sellerId } });
+    if(restaurant.isOpen === false) throw new AppError(400, 'RESTAURANT_CLOSED', 'Cannot create order request. The restaurant is closed');
+    ownerId = restaurant.ownerId;
+  } else if (store_type === 'grocery') {
+    sellerId = order.storeId;
+    const store = await prisma.store.findUnique({ where: { id: sellerId } });
+    if(store.isOpen === false) throw new AppError(400, 'STORE_CLOSED', 'Cannot create order request. The store is closed');
+    ownerId = store.ownerId;
   }
-  const menuItemIds = items.map((item) => item.menu_item_id);
 
-  const menuItems = await prisma.menuItem.findMany({
-    where: {
-      id: { in: menuItemIds },
-      restaurantId: order.restaurantId
-    }
-  });
+  const itemIds = items.map((item) => item.item_id);
 
-  if(menuItems.length !== menuItemIds.length){
+  let sellerItems;
+  if (store_type === 'restaurant') {
+    sellerItems = await prisma.menuItem.findMany({
+      where: { id: { in: itemIds }, restaurantId: sellerId }
+    });
+  } else if (store_type === 'grocery') {
+    sellerItems = await prisma.groceryProduct.findMany({
+      where: { id: { in: itemIds }, storeId: sellerId }
+    });
+  }
+
+  if(sellerItems.length !== itemIds.length){
     throw new AppError(400, 'INVALID_ITEMS', 'Invalid request items');
   }
 
-  const priceMap = Object.fromEntries(menuItems.map((item) => [item.id, item.price]));
+  const priceMap = Object.fromEntries(sellerItems.map((item) => [item.id, item.price]));
 
   const replaceOrderItems = items.map((item) => ({
-    menuItemId: item.menu_item_id,
+    itemId: item.item_id,
     quantity: item.quantity,
-    price: priceMap[item.menu_item_id]
+    price: priceMap[item.item_id]
   }));
 
   const refundAmount = type === REQUEST_TYPE.REFUND
@@ -226,12 +272,12 @@ async function createOrderRequest(orderId, customerId, { type, reason, image_url
     type: 'order_request'
   }
 
-  await notificationService.createNotification({...notification, userId: restaurant.ownerId});
+  await notificationService.createNotification({...notification, userId: ownerId});
 
-  await notificationService.sendPushNotification({...notification, userId: restaurant.ownerId});
+  await notificationService.sendPushNotification({...notification, userId: ownerId});
 
   if(io){
-    io.to(`restaurant:${order.restaurantId}`).emit('order_request', {
+    io.to(`${store_type}:${sellerId}`).emit('order_request', {
       order_id: orderId,
       request_id: replaceOrderRecord.id,
       reason,

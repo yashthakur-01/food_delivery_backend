@@ -12,14 +12,17 @@ async function getCart(userId) {
     where: { userId },
     include: {
       items: {
-        include: { menuItem: true },
+        include: { menuItem: true, groceryProduct: true },
       },
     },
   });
 
-  if (!cart) return { items: [], total: 0, restaurantId: null };
+  if (!cart) return { items: [], total: 0, restaurantId: null, storeId: null };
 
-  const total = cart.items.reduce((sum, i) => sum + i.menuItem.price * i.quantity, 0);
+  const total = cart.items.reduce((sum, i) => {
+    const price = i.menuItem ? i.menuItem.price : (i.groceryProduct ? i.groceryProduct.price : 0);
+    return sum + price * i.quantity;
+  }, 0);
   return { ...cart, total };
 }
 
@@ -27,29 +30,48 @@ async function getCart(userId) {
  * Add an item to the cart. If the cart already has items from a different
  * restaurant, throw 400. If the item already exists, increment quantity.
  */
-async function addItem(userId, { menuItemId, quantity }) {
-  const menuItem = await prisma.menuItem.findUnique({ where: { id: menuItemId } });
-  if (!menuItem) throw new AppError(404, 'NOT_FOUND', 'Menu item not found');
+async function addItem(userId, { item_id, store_type, quantity }) {
+  let sellerItem;
+  if (store_type === 'restaurant') {
+    sellerItem = await prisma.menuItem.findUnique({ where: { id: item_id } });
+  } else if (store_type === 'grocery') {
+    sellerItem = await prisma.groceryProduct.findUnique({ where: { id: item_id } });
+  }
+  if (!sellerItem) throw new AppError(404, 'NOT_FOUND', 'Item not found');
 
   let cart = await prisma.cart.findUnique({ where: { userId } });
 
-  if (cart && cart.restaurantId && cart.restaurantId !== menuItem.restaurantId) {
-    throw new AppError(400, 'CART_CONFLICT', 'Cart already has items from a different restaurant. Clear cart first.');
+  if (cart) {
+    if (store_type === 'restaurant') {
+      if (cart.storeId) throw new AppError(400, 'CART_CONFLICT', 'Cart already has items from a grocery store. Clear cart first.');
+      if (cart.restaurantId && cart.restaurantId !== sellerItem.restaurantId) throw new AppError(400, 'CART_CONFLICT', 'Cart already has items from a different restaurant. Clear cart first.');
+    } else if (store_type === 'grocery') {
+      if (cart.restaurantId) throw new AppError(400, 'CART_CONFLICT', 'Cart already has items from a restaurant. Clear cart first.');
+      if (cart.storeId && cart.storeId !== sellerItem.storeId) throw new AppError(400, 'CART_CONFLICT', 'Cart already has items from a different store. Clear cart first.');
+    }
   }
 
   if (!cart) {
-    cart = await prisma.cart.create({
-      data: { userId, restaurantId: menuItem.restaurantId },
-    });
-  } else if (!cart.restaurantId) {
+    const data = { userId };
+    if (store_type === 'restaurant') data.restaurantId = sellerItem.restaurantId;
+    if (store_type === 'grocery') data.storeId = sellerItem.storeId;
+    cart = await prisma.cart.create({ data });
+  } else if (!cart.restaurantId && !cart.storeId) {
+    const data = {};
+    if (store_type === 'restaurant') data.restaurantId = sellerItem.restaurantId;
+    if (store_type === 'grocery') data.storeId = sellerItem.storeId;
     cart = await prisma.cart.update({
       where: { id: cart.id },
-      data: { restaurantId: menuItem.restaurantId },
+      data,
     });
   }
 
+  const whereClause = { cartId: cart.id };
+  if (store_type === 'restaurant') whereClause.menuItemId = item_id;
+  if (store_type === 'grocery') whereClause.groceryProductId = item_id;
+
   const existing = await prisma.cartItem.findFirst({
-    where: { cartId: cart.id, menuItemId },
+    where: whereClause,
   });
 
   if (existing) {
@@ -59,7 +81,7 @@ async function addItem(userId, { menuItemId, quantity }) {
     });
   } else {
     await prisma.cartItem.create({
-      data: { cartId: cart.id, menuItemId, quantity },
+      data: { ...whereClause, quantity },
     });
   }
 
@@ -82,7 +104,7 @@ async function removeItem(userId, cartItemId) {
 
   const remaining = await prisma.cartItem.count({ where: { cartId: cart.id } });
   if (remaining === 0) {
-    await prisma.cart.update({ where: { id: cart.id }, data: { restaurantId: null } });
+    await prisma.cart.update({ where: { id: cart.id }, data: { restaurantId: null, storeId: null } });
   }
 
   return getCart(userId);
@@ -113,7 +135,7 @@ async function clearCart(userId) {
   if (!cart) return;
 
   await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
-  await prisma.cart.update({ where: { id: cart.id }, data: { restaurantId: null } });
+  await prisma.cart.update({ where: { id: cart.id }, data: { restaurantId: null, storeId: null } });
 }
 
 /**

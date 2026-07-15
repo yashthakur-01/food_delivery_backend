@@ -38,11 +38,4 @@ async function clearCart(req, res, next) {
   } catch (err) { next(err); }
 }
 
-async function checkoutCart(req, res, next) {
-  try {
-    const order = await service.checkoutCart(req.user.id, req.body.address_id);
-    return success(res, 'Order placed from cart', order, 201);
-  } catch (err) { next(err); }
-}
-
-module.exports = { getCart, addItem, removeItem, updateItemQuantity, clearCart, checkoutCart };
+module.exports = { getCart, addItem, removeItem, updateItemQuantity, clearCart };
