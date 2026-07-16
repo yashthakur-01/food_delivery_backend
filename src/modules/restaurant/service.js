@@ -186,12 +186,16 @@ async function updateOrderRequest(replacementId, ownerId, status){
   const replacement = await getOrderRequest(replacementId, ownerId);
 
   if(status === REQUEST_STATUS.ACCEPTED && replacement.type === REQUEST_TYPE.REPLACE){
+    const store_type = replacement.order.storeId ? 'grocery' : 'restaurant';
+    const store_id = replacement.order.storeId || replacement.order.restaurantId;
+
     const newOrder = await orderService.createOrder(
       replacement.userId,
       {
-        restaurant_id: replacement.order.restaurantId,
+        store_id,
+        store_type,
         items: replacement.newItems.map((item)=>({
-          menu_item_id: item.menuItemId,
+          item_id: item.itemId || item.menuItemId || item.groceryProductId,
           quantity: item.quantity
         }))
       },{
@@ -201,6 +205,20 @@ async function updateOrderRequest(replacementId, ownerId, status){
         freeReplacement:true
       }
     );
+
+    // ── Stock restoration for replaced items (grocery orders only) ────
+    if (replacement.order.storeId && replacement.oldItems) {
+      const { restoreStock } = require('../../common/utils/stockUtils');
+      const itemsToRestore = replacement.oldItems
+        .filter((item) => item.groceryProductId)
+        .map((item) => ({
+          item_id: item.groceryProductId,
+          quantity: item.quantity,
+        }));
+      if (itemsToRestore.length > 0) {
+        await restoreStock(prisma, itemsToRestore);
+      }
+    }
 
     await prisma.orderRequest.update({
       where:{ id: replacementId },
@@ -215,6 +233,25 @@ async function updateOrderRequest(replacementId, ownerId, status){
       replacement.orderId,
       replacement.refundAmount
     );
+
+    // ── Stock restoration for refunded items (grocery orders only) ────
+    if (replacement.order.storeId) {
+      const { restoreStock } = require('../../common/utils/stockUtils');
+      const itemsToUse = (replacement.newItems && replacement.newItems.length > 0)
+        ? replacement.newItems
+        : (replacement.oldItems || []);
+
+      const itemsToRestore = itemsToUse
+        .filter((item) => item.itemId || item.groceryProductId)
+        .map((item) => ({
+          item_id: item.itemId || item.groceryProductId,
+          quantity: item.quantity,
+        }));
+
+      if (itemsToRestore.length > 0) {
+        await restoreStock(prisma, itemsToRestore);
+      }
+    }
 
     return prisma.orderRequest.update({
       where:{ id: replacementId },

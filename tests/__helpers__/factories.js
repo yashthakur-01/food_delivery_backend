@@ -113,6 +113,8 @@ async function cleanDatabase() {
   await prisma.order.deleteMany({});
   await prisma.cartItem.deleteMany({});
   await prisma.cart.deleteMany({});
+  await prisma.groceryProduct.deleteMany({});
+  await prisma.store.deleteMany({});
   await prisma.menuItem.deleteMany({});
   await prisma.restaurant.deleteMany({});
   await prisma.address.deleteMany({});

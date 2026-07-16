@@ -5,7 +5,8 @@ const AppError = require('../../common/utils/AppError');
 const ORDER_STATUS = require('../../common/constants/orderStatus');
 const notificationService = require('../notification/service');
 const REQUEST_STATUS = require('../../common/constants/OrderRequest');
-const REQUEST_TYPE = require("../../common/constants/requestType")
+const REQUEST_TYPE = require("../../common/constants/requestType");
+const { deductStock, restoreStockForOrder } = require('../../common/utils/stockUtils');
 
 const VALID_TRANSITIONS = {
   [ORDER_STATUS.PENDING]:          [ORDER_STATUS.CONFIRMED, ORDER_STATUS.CANCELLED],
@@ -133,6 +134,13 @@ if (store_type === "grocery") {
     include: { items: true },
   });
 
+  // ── Stock deduction (grocery orders only) ─────────────────────────────────
+  // Atomically decrement stock and soldCount for each grocery product.
+  // auto-toggles isAvailable to false if stock reaches 0.
+  if (store_type === 'grocery') {
+    await deductStock(prisma, items);
+  }
+
   return order;
 }
 
@@ -152,6 +160,13 @@ async function cancelOrder(orderId, customerId) {
 
   if (!CANCELLABLE_STATUSES.includes(order.status)) {
     throw new AppError(400, 'INVALID_STATUS', `Order cannot be cancelled in status: ${order.status}`);
+  }
+
+  // ── Stock restoration (grocery orders only) ───────────────────────────────
+  // Restore stock for every grocery product in this order before cancelling.
+  // Also re-enables isAvailable for products that were auto-disabled.
+  if (order.storeId) {
+    await restoreStockForOrder(prisma, orderId);
   }
 
   return prisma.order.update({
@@ -332,7 +347,7 @@ async function createOrderRequest(orderId, customerId, { type, store_type, reaso
       reason,
       imageUrl: image_url,
       oldItems: order.items,
-      newItems: type === REQUEST_TYPE.REPLACE ? replaceOrderItems : null,
+      newItems: replaceOrderItems,
       refundAmount,
       status: REQUEST_STATUS.PENDING,
       type
