@@ -7,8 +7,9 @@ const prisma = require('../../config/db');
 const AppError = require('../../common/utils/AppError');
 const PAYMENT_STATUS = require('../../common/constants/paymentStatus');
 const ORDER_STATUS = require('../../common/constants/orderStatus');
+const { emitNewOrder, emitOrderStatusUpdate } = require('../../sockets/orderHandlers');
+const { emitNewDeliveryRequest } = require('../../sockets/deliveryHandlers');
 const { restoreStockForOrder } = require('../../common/utils/stockUtils');
-
 // ─── Razorpay client (lazy — only initialised when keys are present) ──────────
 
 function getRazorpay() {
@@ -73,7 +74,7 @@ const createPayment = async ({ orderId, amount, method, userId }) => {
  * Verifies the Razorpay signature returned by the client after payment.
  * Falls back to the old mock-success flow when Razorpay keys are absent.
  */
-const verifyPayment = async ({ paymentId, razorpayPaymentId, razorpayOrderId, razorpaySignature, success: mockSuccess, userId }) => {
+const verifyPayment = async ({ paymentId, razorpayPaymentId, razorpayOrderId, razorpaySignature, success: mockSuccess, userId }, io) => {
   const payment = await prisma.payment.findUnique({
     where: { id: paymentId },
     include: { order: true },
@@ -117,7 +118,25 @@ const verifyPayment = async ({ paymentId, razorpayPaymentId, razorpayOrderId, ra
     updatedOrder = await prisma.order.update({
       where: { id: payment.orderId },
       data: { status: ORDER_STATUS.CONFIRMED },
+      include: { restaurant: true, store: true }
     });
+
+    if (io) {
+      emitOrderStatusUpdate(io, updatedOrder.userId, {
+        order_id: updatedOrder.id,
+        status: ORDER_STATUS.CONFIRMED,
+      });
+
+      emitNewDeliveryRequest(io, {
+        order_id: updatedOrder.id,
+        status: ORDER_STATUS.CONFIRMED,
+      });
+
+      const ownerId = updatedOrder.restaurant ? updatedOrder.restaurant.ownerId : (updatedOrder.store ? updatedOrder.store.ownerId : null);
+      if (ownerId) {
+        emitNewOrder(io, ownerId, { order_id: updatedOrder.id, status: ORDER_STATUS.CONFIRMED });
+      }
+    }
   } else {
     updatedPayment = await prisma.payment.update({
       where: { id: paymentId },
@@ -145,7 +164,7 @@ const verifyPayment = async ({ paymentId, razorpayPaymentId, razorpayOrderId, ra
  * Validates the Razorpay webhook signature and processes the event.
  * rawBody must be the raw Buffer from express.raw() middleware.
  */
-const handleWebhook = async (rawBody, signature) => {
+const handleWebhook = async (rawBody, signature, io) => {
   const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
   if (!webhookSecret) throw new AppError(500, 'CONFIG_ERROR', 'Webhook secret not configured');
 
@@ -176,10 +195,28 @@ const handleWebhook = async (rawBody, signature) => {
         where: { id: payment.id },
         data: { status: PAYMENT_STATUS.SUCCESS, razorpayPaymentId },
       });
-      await prisma.order.update({
+      const updatedOrder = await prisma.order.update({
         where: { id: payment.orderId },
         data: { status: ORDER_STATUS.CONFIRMED },
+        include: { restaurant: true, store: true }
       });
+
+      if (io) {
+        emitOrderStatusUpdate(io, updatedOrder.userId, {
+          order_id: updatedOrder.id,
+          status: ORDER_STATUS.CONFIRMED,
+        });
+
+        emitNewDeliveryRequest(io, {
+          order_id: updatedOrder.id,
+          status: ORDER_STATUS.CONFIRMED,
+        });
+
+        const ownerId = updatedOrder.restaurant ? updatedOrder.restaurant.ownerId : (updatedOrder.store ? updatedOrder.store.ownerId : null);
+        if (ownerId) {
+          emitNewOrder(io, ownerId, { order_id: updatedOrder.id, status: ORDER_STATUS.CONFIRMED });
+        }
+      }
       break;
     }
     case 'payment.failed': {
