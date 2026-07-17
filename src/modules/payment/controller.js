@@ -12,7 +12,8 @@ const createPayment = async (req, res, next) => {
 
 const verifyPayment = async (req, res, next) => {
   try {
-    const result = await paymentService.verifyPayment({ ...req.body, userId: req.user.id });
+    const io = req.app.get('io');
+    const result = await paymentService.verifyPayment({ ...req.body, userId: req.user.id }, io);
     return success(res, 'Payment verified', result);
   } catch (err) { next(err); }
 };
@@ -26,7 +27,8 @@ const webhook = async (req, res, next) => {
     const signature = req.headers['x-razorpay-signature'];
     if (!signature) return res.status(400).json({ success: false, message: 'Missing signature header' });
 
-    const result = await paymentService.handleWebhook(req.body, signature);
+    const io = req.app.get('io');
+    const result = await paymentService.handleWebhook(req.body, signature, io);
     return res.status(200).json({ success: true, ...result });
   } catch (err) { next(err); }
 };
