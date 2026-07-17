@@ -138,20 +138,23 @@ async function getAvailableOrders({ page = 1, limit = 20 } = {}) {
       skip, take: limit,
       orderBy: { createdAt: 'desc' },
       include: {
-        restaurant: { select: { id: true, name: true, address: true } },
-        user: { select: { name: true } },
-        items: true,
-      },
+  restaurant: { select: { id: true, name: true, address: true } },
+  store: { select: { id: true, name: true, address: true } },
+  user: { select: { name: true } },
+  items: true,
+},
     }),
     prisma.order.count({ where: { status: ORDER_STATUS.CONFIRMED, tracking: null } }),
   ]);
 
   const enriched = orders.map((o) => ({
-    ...o,
-    customerName: o.user?.name || 'Customer',
-    itemCount: o.items.length,
-    deliveryFee: DELIVERY_FEE,
-  }));
+  ...o,
+  customerName: o.user?.name || 'Customer',
+  pickupName: o.restaurant?.name || o.store?.name,
+  pickupAddress: o.restaurant?.address || o.store?.address,
+  itemCount: o.items.length,
+  deliveryFee: DELIVERY_FEE,
+}));
 
   return { orders: enriched, total, page, limit };
 }
@@ -163,6 +166,7 @@ async function getActiveDelivery(agentId) {
       order: {
         include: {
           restaurant: { select: { id: true, name: true, address: true } },
+    store: { select: { id: true, name: true, address: true } },
           user: { select: { name: true } },
           items: { include: { menuItem: { select: { name: true, price: true } } } },
         },
@@ -172,11 +176,14 @@ async function getActiveDelivery(agentId) {
   if (!tracking) return null;
 
   return {
-    ...tracking,
-    customerName: tracking.order.user?.name || 'Customer',
-    customerAddress: tracking.order.deliveryAddress,
-    restaurantAddress: tracking.order.restaurant?.address,
-  };
+  ...tracking,
+  customerName: tracking.order.user?.name || 'Customer',
+  customerAddress: tracking.order.deliveryAddress,
+  restaurantAddress:
+    tracking.order.restaurant?.address || tracking.order.store?.address,
+  pickupName:
+    tracking.order.restaurant?.name || tracking.order.store?.name,
+};
 }
 
 async function getDeliveryHistory(agentId, { page = 1, limit = 20 } = {}) {
@@ -186,7 +193,7 @@ async function getDeliveryHistory(agentId, { page = 1, limit = 20 } = {}) {
       where: { agentId, order: { status: ORDER_STATUS.DELIVERED } },
       skip, take: limit,
       orderBy: { completedAt: 'desc' },
-      include: { order: { include: { restaurant: { select: { id: true, name: true } } } } },
+      include: { order: { include: { restaurant: { select: { id: true, name: true } }, store: { select: { id: true, name: true } } } } },
     }),
     prisma.deliveryTracking.count({ where: { agentId, order: { status: ORDER_STATUS.DELIVERED } } }),
   ]);
