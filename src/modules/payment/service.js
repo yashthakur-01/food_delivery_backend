@@ -189,6 +189,10 @@ const handleWebhook = async (rawBody, signature, io) => {
   const payment = await prisma.payment.findFirst({ where: { razorpayOrderId } });
   if (!payment) return { processed: false, reason: 'Payment record not found' };
 
+  if (payment.status !== PAYMENT_STATUS.PENDING) {
+    return { processed: true, reason: 'Payment already processed' };
+  }
+
   switch (event.event) {
     case 'payment.captured': {
       await prisma.payment.update({
@@ -203,11 +207,6 @@ const handleWebhook = async (rawBody, signature, io) => {
 
       if (io) {
         emitOrderStatusUpdate(io, updatedOrder.userId, {
-          order_id: updatedOrder.id,
-          status: ORDER_STATUS.CONFIRMED,
-        });
-
-        emitNewDeliveryRequest(io, {
           order_id: updatedOrder.id,
           status: ORDER_STATUS.CONFIRMED,
         });
