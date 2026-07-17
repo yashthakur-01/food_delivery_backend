@@ -127,11 +127,6 @@ const verifyPayment = async ({ paymentId, razorpayPaymentId, razorpayOrderId, ra
         status: ORDER_STATUS.CONFIRMED,
       });
 
-      emitNewDeliveryRequest(io, {
-        order_id: updatedOrder.id,
-        status: ORDER_STATUS.CONFIRMED,
-      });
-
       const ownerId = updatedOrder.restaurant ? updatedOrder.restaurant.ownerId : (updatedOrder.store ? updatedOrder.store.ownerId : null);
       if (ownerId) {
         emitNewOrder(io, ownerId, { order_id: updatedOrder.id, status: ORDER_STATUS.CONFIRMED });
