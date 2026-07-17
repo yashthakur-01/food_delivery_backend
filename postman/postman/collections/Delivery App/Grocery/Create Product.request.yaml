@@ -1,24 +1,24 @@
 $kind: http-request
-name: Update Store Profile
-url: "{{base_url}}/api/grocery/stores/profile"
-method: PUT
+name: Create Product
+url: "{{base_url}}/api/grocery/stores/products"
+method: POST
 headers:
   Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTEwNmQ1ZDUwMWU2Y2YwYzdhZGFmOSIsInBob25lIjoiKzkxOTg3NjU0MzIxMSIsImVtYWlsIjoic2VsbGVyQGV4YW1wbGUuY29tIiwicm9sZSI6InNlbGxlciIsImlzX3ZlcmlmaWVkIjp0cnVlLCJ0b2tlbklkIjoiN2VkZTljZWUtOTI4Ny00MGMzLWI0Y2ItMmQ0ZTQ3Yzc1ZjM2IiwiaWF0IjoxNzg0MTQxMjg4LCJleHAiOjE3ODQxNDIxODh9.yPYhza93fiDWZIBNPQL9DRYPaD8fSbrsW93D_tG6cqA
 body:
   type: json
   content: "{\r
 
-    \  \"name\": \"Fresh Mart Superstore\",\r
+    \  \"storeId\": \"6a5106f6d501e6cf0c7adafa\",\r
 
-    \  \"description\": \"Groceries, household essentials and daily needs\",\r
+    \  \"name\": \"Amul Milk\",\r
 
-    \  \"deliveryFee\": 25,\r
+    \  \"category\": \"Dairy\",\r
 
-    \  \"minOrderAmount\": 150,\r
+    \  \"brand\": \"Amul\",\r
 
-    \  \"isOpen\": true,\r
+    \  \"price\": 30,\r
 
-    \  \"offerTag\": \"20% OFF\"\r
+    \  \"stock\": 50\r
 
     }"
-order: 1618891182681738
+order: 3789551769082830

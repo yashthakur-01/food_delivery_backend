@@ -1,0 +1,5 @@
+$kind: http-request
+name: Get Store Details
+url: "{{base_url}} /api/grocery/stores/6a5106f6d501e6cf0c7adafa"
+method: GET
+order: 4501342688019071

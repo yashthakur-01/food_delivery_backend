@@ -1,8 +1,9 @@
 $kind: http-request
+name: Checkout
 url: "{{base_url}}/api/cart/checkout"
 method: POST
 headers:
-  Authorization: Bearer {{supabase_service_role_api_key_1b43}}
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTdjZGZiMzM2NDUyODM0ZGYyOWM1ZiIsInBob25lIjoiKzkxOTg3NjU0MzIwNCIsImVtYWlsIjoiY3VzdG9tZXJAZ21haWwuY29tIiwicm9sZSI6ImN1c3RvbWVyIiwiaXNfdmVyaWZpZWQiOnRydWUsInRva2VuSWQiOiJkZWYxMjM1MC04ZTAyLTQ5YTItYmM4Yi02NmQxMzAzODg4YWYiLCJpYXQiOjE3ODQxNDAzNTcsImV4cCI6MTc4NDE0MTI1N30.PvYJIXybgvSMc3xUpsnVrqBfml4-LqdEVGJJlyLI_8k
   Content-Type: application/json
 body:
   type: json

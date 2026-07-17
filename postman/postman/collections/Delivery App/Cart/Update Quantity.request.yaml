@@ -1,9 +1,10 @@
 $kind: http-request
-url: "{{base_url}}/api/cart/items/6a3d78b799f8c2487d8bf7d6"
+name: Update Quantity
+url: "{{base_url}}/api/cart/items/6a57d0d43e056a138f5a17fd"
 method: PATCH
 headers:
-  Authorization: Bearer {{supabase_service_role_api_key_1b43}}
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTdjZGZiMzM2NDUyODM0ZGYyOWM1ZiIsInBob25lIjoiKzkxOTg3NjU0MzIwNCIsImVtYWlsIjoiY3VzdG9tZXJAZ21haWwuY29tIiwicm9sZSI6ImN1c3RvbWVyIiwiaXNfdmVyaWZpZWQiOnRydWUsInRva2VuSWQiOiJkZWYxMjM1MC04ZTAyLTQ5YTItYmM4Yi02NmQxMzAzODg4YWYiLCJpYXQiOjE3ODQxNDAzNTcsImV4cCI6MTc4NDE0MTI1N30.PvYJIXybgvSMc3xUpsnVrqBfml4-LqdEVGJJlyLI_8k
 body:
   type: json
-  content: "{\r\n  \"quantity\": 3\r\n}"
+  content: "{\r\n  \"quantity\": 40\r\n}"
 order: 4000

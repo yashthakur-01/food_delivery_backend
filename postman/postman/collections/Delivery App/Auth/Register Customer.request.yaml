@@ -1,4 +1,5 @@
 $kind: http-request
+name: Register Customer
 url: "{{base_url}}/api/auth/register"
 method: POST
 body:
@@ -11,7 +12,9 @@ body:
 
     \  \"password\": \"Password123!\",\r
 
-    \  \"role\": \"customer\"\r
+    \  \"role\": \"customer\",\r
+
+    \  \"email\": \"customer@gmail.com\"\r
 
     }"
 order: 5000

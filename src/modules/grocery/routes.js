@@ -21,6 +21,54 @@ const {
 
 const router = Router();
 
+// ---------------- PUBLIC STORE APIs ----------------
+
+// List all approved grocery stores
+router.get(
+  '/',
+  controller.listStores
+);
+
+router.get(
+    '/seller/store',
+    ...sellerGuard,
+    controller.getSellerStore
+);
+
+// Get a single grocery store
+router.get(
+  '/:id',
+  controller.getStore
+);
+
+// List products of a store
+router.get(
+  '/:id/products',
+  controller.listStoreProducts
+);
+
+// Search grocery products
+router.get(
+  '/products/search',
+  controller.searchProducts
+);
+
+// Get single product
+router.get(
+  '/products/:id',
+  controller.getProduct
+);
+
+
+
+router.patch(
+    '/:storeId/toggle-open',
+    ...sellerGuard,
+    controller.toggleStoreOpen
+);
+
+
+// Seller routes
 router.post(
   '/profile',
   ...sellerGuard,
@@ -32,6 +80,7 @@ router.put(
   '/profile',
   authenticate,
   ...sellerGuard,
+  validate(updateStoreSchema),
   controller.updateStore
 );
  // GET /api/grocery/stores
@@ -44,13 +93,6 @@ router.get(
 router.get(
     '/stores/:id',
     controller.getStore
-);
-
-// GET /api/grocery/seller/store
-router.get(
-    '/seller/store',
-    ...sellerGuard,
-    controller.getSellerStore
 );
 
 // PATCH /api/grocery/stores/:storeId/toggle-open
@@ -68,6 +110,13 @@ router.post(
   controller.createProduct
 );
 
+// Search products
+router.get(
+  '/products/search',
+  controller.searchProducts
+);
+
+
 // PATCH  /api/grocery/products/:id
 router.patch(
   '/products/:id',
@@ -76,10 +125,19 @@ router.patch(
   controller.updateProduct
 );
 
+// PATCH  /api/grocery/products/:id/stock
+router.patch(
+    '/products/:id/stock',
+    ...sellerGuard,
+    validate(updateStockSchema),
+    controller.updateStock
+);
+
 // PATCH  /api/grocery/products/:id/toggle
 router.patch(
   '/products/:id/toggle',
   ...sellerGuard,
+  validate(updateProductSchema),
   controller.toggleProductAvailability);
 
 // DELETE /api/grocery/products/:id 
@@ -87,32 +145,6 @@ router.delete(
   '/products/:id',
   ...sellerGuard,
   controller.deleteProduct
-);
-
-// GET /api/grocery/stores/:id/products
-router.get(
-    '/stores/:id/products',
-    controller.listStoreProducts
-);
-
-// GET /api/grocery/products/search
-router.get(
-    '/products/search',
-    controller.searchProducts
-);
-
-// GET /api/grocery/products/:id
-router.get(
-    '/products/:id',
-    controller.getProduct
-);
-
-// PATCH /api/grocery/products/:id/stock
-router.patch(
-    '/products/:id/stock',
-    ...sellerGuard,
-    validate(updateStockSchema),
-    controller.updateStock
 );
 
 module.exports = router;

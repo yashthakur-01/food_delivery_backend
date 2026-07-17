@@ -5,3 +5,37 @@ node_modules/
 
 app-release.apk
 app-release/
+
+#logs
+logs/
+*.logs
+combined.log
+error.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build output
+dist/
+build/
+
+# Cache
+.cache/
+.eslintcache
+
+# Runtime files
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# IDEs
+.vscode/
+.idea/
+.vscode/setting.json
+.vscode/launch.json
+
+# Temporary files
+tmp/
+temp/

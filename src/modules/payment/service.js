@@ -7,6 +7,7 @@ const prisma = require('../../config/db');
 const AppError = require('../../common/utils/AppError');
 const PAYMENT_STATUS = require('../../common/constants/paymentStatus');
 const ORDER_STATUS = require('../../common/constants/orderStatus');
+const { restoreStockForOrder } = require('../../common/utils/stockUtils');
 
 // ─── Razorpay client (lazy — only initialised when keys are present) ──────────
 
@@ -126,6 +127,13 @@ const verifyPayment = async ({ paymentId, razorpayPaymentId, razorpayOrderId, ra
       where: { id: payment.orderId },
       data: { status: ORDER_STATUS.CANCELLED },
     });
+
+    // ── Stock restoration on payment failure (grocery orders only) ──────────
+    // When payment fails, the order is cancelled; restore grocery stock so
+    // other customers can buy the same items.
+    if (payment.order.storeId) {
+      await restoreStockForOrder(prisma, payment.orderId);
+    }
   }
 
   return { payment: updatedPayment, order: updatedOrder };
@@ -179,10 +187,15 @@ const handleWebhook = async (rawBody, signature) => {
         where: { id: payment.id },
         data: { status: PAYMENT_STATUS.FAILED, razorpayPaymentId },
       });
-      await prisma.order.update({
+      const cancelledOrder = await prisma.order.update({
         where: { id: payment.orderId },
         data: { status: ORDER_STATUS.CANCELLED },
       });
+
+      // ── Stock restoration on webhook payment failure (grocery orders only) ─
+      if (cancelledOrder.storeId) {
+        await restoreStockForOrder(prisma, payment.orderId);
+      }
       break;
     }
     case 'refund.created':

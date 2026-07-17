@@ -3,7 +3,8 @@
 const Joi = require('joi');
 
 const addItemSchema = Joi.object({
-  menuItemId: Joi.string().min(1).required(),
+  item_id: Joi.string().min(1).required(),
+  store_type: Joi.string().valid('restaurant', 'grocery').required(),
   quantity: Joi.number().integer().min(1).required(),
 });
 

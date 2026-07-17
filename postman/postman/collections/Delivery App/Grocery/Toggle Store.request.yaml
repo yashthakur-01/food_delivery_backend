@@ -1,0 +1,7 @@
+$kind: http-request
+name: Toggle Store
+url: "{{base_url}}/api/grocery/stores/6a5106f6d501e6cf0c7adafa/toggle-open"
+method: PATCH
+headers:
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTEwNmQ1ZDUwMWU2Y2YwYzdhZGFmOSIsInBob25lIjoiKzkxOTg3NjU0MzIxMSIsImVtYWlsIjoic2VsbGVyQGV4YW1wbGUuY29tIiwicm9sZSI6InNlbGxlciIsImlzX3ZlcmlmaWVkIjp0cnVlLCJ0b2tlbklkIjoiNzFmMDE0YjktM2EwYi00OGJkLTkwMDktNDQwZjg0ZjExMDRmIiwiaWF0IjoxNzg0MDI0OTgzLCJleHAiOjE3ODQwMjU4ODN9.ICwXHSEj_NUq3mcT--WqnWfpeSEn9X_XOIdeeZwl-xM
+order: 4503091888216939

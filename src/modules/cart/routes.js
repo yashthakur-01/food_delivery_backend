@@ -17,6 +17,5 @@ router.post('/items',              validate(addItemSchema),      controller.addI
 router.patch('/items/:itemId',     validate(updateItemSchema),   controller.updateItemQuantity);
 router.delete('/items/:itemId',    controller.removeItem);
 router.delete('/',                 controller.clearCart);
-router.post('/checkout',           validate(checkoutSchema),     controller.checkoutCart);
 
 module.exports = router;

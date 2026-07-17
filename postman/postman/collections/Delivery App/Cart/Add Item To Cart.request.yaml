@@ -1,16 +1,19 @@
 $kind: http-request
+name: Add Item To Cart
 url: "{{base_url}}/api/cart/items"
 method: POST
 headers:
-  Authorization: Bearer {{supabase_service_role_api_key_1b43}}
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTdjZGZiMzM2NDUyODM0ZGYyOWM1ZiIsInBob25lIjoiKzkxOTg3NjU0MzIwNCIsImVtYWlsIjoiY3VzdG9tZXJAZ21haWwuY29tIiwicm9sZSI6ImN1c3RvbWVyIiwiaXNfdmVyaWZpZWQiOnRydWUsInRva2VuSWQiOiI1MDIyODAzNS0yZWE3LTQ1MDMtYTI3Yy01NzQyODRlNGRmYTkiLCJpYXQiOjE3ODQxNDEyMTUsImV4cCI6MTc4NDE0MjExNX0.qtPTIBHgOdS_qk1tB0HQZz1Jw-B4Lc1gEbMUPFYAYBM
   Content-Type: application/json
 body:
   type: json
   content: "{\r
 
-    \  \"menuItemId\": \"6a3cedf2c809de17f352dc89\",\r
+    \  \"item_id\": \"6a57cedd336452834df29c60\",\r
 
-    \  \"quantity\": 2\r
+    \  \"store_type\": \"grocery\",\r
+
+    \  \"quantity\": 30\r
 
     }"
 order: 5000

@@ -1,0 +1,10 @@
+$kind: http-request
+name: Update Stock
+url: "{{base_url}} /api/grocery/stores/products/6a560b4e7df44ed1c11a07ad/stock"
+method: PATCH
+headers:
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTEwNmQ1ZDUwMWU2Y2YwYzdhZGFmOSIsInBob25lIjoiKzkxOTg3NjU0MzIxMSIsImVtYWlsIjoic2VsbGVyQGV4YW1wbGUuY29tIiwicm9sZSI6InNlbGxlciIsImlzX3ZlcmlmaWVkIjp0cnVlLCJ0b2tlbklkIjoiYjZmYTc0M2UtOGIwOC00NWJkLTljZTUtYzc0OTE3MzkyODRjIiwiaWF0IjoxNzg0MDIzNzkwLCJleHAiOjE3ODQwMjQ2OTB9.2po5f812bMKo5GDI1tJOgg-Nn9r7YuYIOIQrRHAqmhg
+body:
+  type: json
+  content: "{\r\n  \"stock\": 100\r\n}"
+order: 4094047968818492
