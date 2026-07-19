@@ -1,8 +1,9 @@
 $kind: http-request
+name: Add Menu Items
 url: "{{base_url}}/api/vendor/menu"
 method: POST
 headers:
-  Authorization: Bearer {{supabase_service_role_api_key_0ftp}}
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTc4Mzk0Y2QyZmVlODY0OWM3NTY1ZiIsInBob25lIjoiKzkxOTg3NjU0MzIwMSIsImVtYWlsIjoib3duZXJAZ21haWwuY29tIiwicm9sZSI6InJlc3RhdXJhbnRfb3duZXIiLCJpc192ZXJpZmllZCI6dHJ1ZSwidG9rZW5JZCI6IjcwNjFjNzk5LWJiMzktNGJlMS04NjI0LWU3OTUxNzY2ODA0MSIsImlhdCI6MTc4NDM4MzQ3OSwiZXhwIjoxNzg0Mzg0Mzc5fQ.aSfDDOrh7fuVDpwXpBJfngb2ZC4iRl2Vsb50QenGMhg
   Content-Type: application/json
 body:
   type: json

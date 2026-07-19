@@ -5,7 +5,7 @@ const AppError = require('../../common/utils/AppError');
 
 //if no store found throw the error resolving sellers grocery store
 async function getOwnerStore(ownerId) {
-  const store = await prisma.groceryStore.findFirst({
+  const store = await prisma.store.findFirst({
     where: { ownerId }
   });
 
@@ -22,7 +22,7 @@ async function getOwnerStore(ownerId) {
 
 // assert a store to the requesting seller 
 async function assertOwnership(storeId, ownerId) {
-  const store = await prisma.groceryStore.findUnique({
+  const store = await prisma.store.findUnique({
     where: { id: storeId }
   });
 
@@ -50,7 +50,7 @@ async function listStores({ page = 1, limit = 20, category } = {}) {
   if (category) where.category = { equals: category, mode: 'insensitive' };
 
   const [stores, total] = await Promise.all([
-    prisma.groceryStore.findMany({
+    prisma.store.findMany({
       where,
       skip,
       take: limit,
@@ -62,7 +62,7 @@ async function listStores({ page = 1, limit = 20, category } = {}) {
         isOpen: true, offerTag: true, latitude: true, longitude: true,
       },
     }),
-    prisma.groceryStore.count({ where }),
+    prisma.store.count({ where }),
   ]);
 
   return { stores, total, page, limit };
@@ -70,7 +70,7 @@ async function listStores({ page = 1, limit = 20, category } = {}) {
 
 // GET /api/grocery/stores/:id View a single grocery store for public view.
 async function getStore(storeId) {
-  const store = await prisma.groceryStore.findUnique({
+  const store = await prisma.store.findUnique({
     where: { id: storeId }
   });
   if (!store) throw new AppError(
@@ -84,7 +84,7 @@ async function getStore(storeId) {
 
 
 async function createStore(ownerId, data) {
-  const existingStore = await prisma.groceryStore.findFirst({
+  const existingStore = await prisma.store.findFirst({
     where: { ownerId },
   });
 
@@ -96,7 +96,7 @@ async function createStore(ownerId, data) {
     );
   }
 
-  return prisma.groceryStore.create({
+  return prisma.store.create({
     data: {
       ...data,
       ownerId,
@@ -107,7 +107,7 @@ async function createStore(ownerId, data) {
 }
 
 async function updateStore(ownerId, data) {
-  const store = await prisma.groceryStore.findFirst({
+  const store = await prisma.store.findFirst({
     where: { ownerId },
   });
 
@@ -119,7 +119,7 @@ async function updateStore(ownerId, data) {
     );
   }
 
-  return prisma.groceryStore.update({
+  return prisma.store.update({
     where: { id: store.id },
     data,
   });
@@ -129,7 +129,7 @@ async function updateStore(ownerId, data) {
 // toggle functionality is remaining here toggleStoreOpen(storeId, ownerId)
 async function toggleStoreOpen(storeId, ownerId) {
   const store = await assertOwnership(storeId, ownerId);
-  return prisma.groceryStore.update({
+  return prisma.store.update({
     where: { id: storeId },
     data:  { isOpen: !store.isOpen },
   });
@@ -147,7 +147,7 @@ async function getSellerStore(ownerId){
 // listing the products GET - /api/grocery/stores/:id/products
 async function listStoreProducts(storeId, { page = 1, limit = 20, category, availableOnly } = {}) {
   // Verify store exists
-  const store = await prisma.groceryStore.findUnique({ where: { id: storeId } });
+  const store = await prisma.store.findUnique({ where: { id: storeId } });
   if (!store) throw new AppError(404, 'NOT_FOUND', 'Grocery store not found');
 
   const skip  = (page - 1) * limit;

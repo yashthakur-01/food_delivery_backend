@@ -1,24 +1,27 @@
 $kind: http-request
+name: Create Order
 url: "{{base_url}}/api/orders"
 method: POST
 headers:
-  Authorization: Bearer {{supabase_service_role_api_key_0adf}}
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTdjZGZiMzM2NDUyODM0ZGYyOWM1ZiIsInBob25lIjoiKzkxOTg3NjU0MzIwNCIsImVtYWlsIjoiY3VzdG9tZXJAZ21haWwuY29tIiwicm9sZSI6ImN1c3RvbWVyIiwiaXNfdmVyaWZpZWQiOnRydWUsInRva2VuSWQiOiI0YjYyN2VmYS02OTRiLTQ1NzMtYjFjNC01NDBjYWM0YzMwMWMiLCJpYXQiOjE3ODQ0ODE1MzIsImV4cCI6MTc4NDQ4MjQzMn0.Dbe214gmeeQSbtPRLoeebWxu2fmPHu9qrRZucn4e_DU
   Content-Type: application/json
 body:
   type: json
   content: "{\r
 
-    \  \"restaurant_id\": \"6a3cea1cc809de17f352dc87\",\r
+    \  \"store_id\": \"6a5b9650e4c982330693c64a\",\r
 
-    \  \"address_id\": \"6a3d706c99f8c2487d8bf7d2\",\r
+    \  \"store_type\": \"grocery\",\r
+
+    \  \"address_id\": \"6a5a53da0942d385514f98d1\",\r
 
     \  \"items\": [\r
 
     \    {\r
 
-    \      \"menu_item_id\": \"6a3cedf2c809de17f352dc89\",\r
+    \      \"item_id\": \"6a5d06e5a9000b729f2ecc7e\",\r
 
-    \      \"quantity\": 2\r
+    \      \"quantity\": 3\r
 
     \    }\r
 

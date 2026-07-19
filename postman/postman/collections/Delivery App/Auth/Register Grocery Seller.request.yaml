@@ -6,11 +6,11 @@ body:
   type: json
   content: "{\r
 
-    \  \"name\": \"Fresh Mart Seller\",\r
+    \  \"name\": \"Daily Mart Seller\",\r
 
-    \  \"email\": \"seller@example.com\",\r
+    \  \"email\": \"dailymartseller@example.com\",\r
 
-    \  \"phone\": \"+919876543211\",\r
+    \  \"phone\": \"+919876543301\",\r
 
     \  \"password\": \"Password123!\",\r
 

@@ -4,7 +4,7 @@ url: "{{base_url}}/api/auth/login/password"
 method: POST
 body:
   type: json
-  content: '{ "identifier": "+919876543211", "password": "Password123!", "role": "seller" }'
+  content: '{ "identifier": "+919876543301", "password": "Password123!", "role": "seller" }'
 auth:
   type: bearer
 order: 3960016668548399

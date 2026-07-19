@@ -1,24 +1,7 @@
 $kind: http-request
-name: Update Store Profile
-url: "{{base_url}}/api/grocery/stores/profile"
-method: PUT
+name: Order Tracking
+url: "{{base_url}}/api/orders/6a5d070da9000b729f2ecc7f/tracking"
+method: GET
 headers:
   Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNWI5NjA4ZTRjOTgyMzMwNjkzYzY0OSIsInBob25lIjoiKzkxOTg3NjU0MzMwMSIsImVtYWlsIjoiZGFpbHltYXJ0c2VsbGVyQGV4YW1wbGUuY29tIiwicm9sZSI6InNlbGxlciIsImlzX3ZlcmlmaWVkIjp0cnVlLCJ0b2tlbklkIjoiMjI1OGMwOTAtMzU2ZS00Zjc3LWI0Y2UtMzlkODNiYTc5ZDA3IiwiaWF0IjoxNzg0NDgxMzU2LCJleHAiOjE3ODQ0ODIyNTZ9.fwDD7ToXOD-97bh3RuadzOK2AZqbIABHHNTT7Peo6sM
-body:
-  type: json
-  content: "{\r
-
-    \  \"name\": \"Fresh Mart Superstore\",\r
-
-    \  \"description\": \"Groceries, household essentials and daily needs\",\r
-
-    \  \"deliveryFee\": 25,\r
-
-    \  \"minOrderAmount\": 150,\r
-
-    \  \"isOpen\": true,\r
-
-    \  \"offerTag\": \"20% OFF\"\r
-
-    }"
-order: 1618891182681738
+order: 1310028645534484

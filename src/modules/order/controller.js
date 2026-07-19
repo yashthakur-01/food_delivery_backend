@@ -37,9 +37,18 @@ async function cancelOrder(req, res, next) {
 async function updateOrderStatus(req, res, next) {
   try {
     const io = req.app.get('io');
-    const order = await service.updateOrderStatus(req.params.id, req.body.status, io);
+
+    const order = await service.updateOrderStatus(
+      req.params.id,
+      req.body.status,
+      req.user,
+      io
+    );
+
     return success(res, 'Order status updated', order);
-  } catch (err) { next(err); }
+  } catch (err) {
+    next(err);
+  }
 }
 
 /**POST /orders/:id/request */
@@ -60,4 +69,22 @@ async function createOrderRequest(req, res, next){
   }
 }
 
-module.exports = { createOrder, getOrders, cancelOrder, updateOrderStatus, createOrderRequest };
+//Order tracking
+async function getOrderTracking(req, res, next) {
+  try {
+    const tracking = await service.getOrderTracking(
+      req.params.id,
+      req.user
+    );
+
+    return success(
+      res,
+      "Tracking retrieved successfully",
+      tracking
+    );
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { createOrder, getOrders, cancelOrder, updateOrderStatus, createOrderRequest, getOrderTracking };

@@ -9,12 +9,12 @@ const REQUEST_TYPE = require("../../common/constants/requestType");
 const { deductStock, restoreStockForOrder } = require('../../common/utils/stockUtils');
 
 const VALID_TRANSITIONS = {
-  [ORDER_STATUS.PENDING]:          [ORDER_STATUS.CONFIRMED, ORDER_STATUS.CANCELLED],
-  [ORDER_STATUS.CONFIRMED]:        [ORDER_STATUS.PREPARING, ORDER_STATUS.CANCELLED],
-  [ORDER_STATUS.PREPARING]:        [ORDER_STATUS.OUT_FOR_DELIVERY],
+  [ORDER_STATUS.PENDING]: [ORDER_STATUS.CONFIRMED, ORDER_STATUS.CANCELLED],
+  [ORDER_STATUS.CONFIRMED]: [ORDER_STATUS.PREPARING, ORDER_STATUS.CANCELLED],
+  [ORDER_STATUS.PREPARING]: [ORDER_STATUS.OUT_FOR_DELIVERY],
   [ORDER_STATUS.OUT_FOR_DELIVERY]: [ORDER_STATUS.DELIVERED],
-  [ORDER_STATUS.DELIVERED]:        [],
-  [ORDER_STATUS.CANCELLED]:        [],
+  [ORDER_STATUS.DELIVERED]: [],
+  [ORDER_STATUS.CANCELLED]: [],
 };
 
 const CANCELLABLE_STATUSES = [ORDER_STATUS.PENDING, ORDER_STATUS.CONFIRMED];
@@ -35,11 +35,11 @@ const CANCELLABLE_STATUSES = [ORDER_STATUS.PENDING, ORDER_STATUS.CONFIRMED];
  */
 async function createOrder(customerId, { store_id, address_id, items, store_type }, additionalData = null) {
   const itemIds = items.map((i) => i.item_id);
-  
+
   let address;
-  if(address_id){
+  if (address_id) {
     address = await prisma.address.findUnique({ where: { id: address_id } });
-    if(!address || address.userId !== customerId){
+    if (!address || address.userId !== customerId) {
       throw new AppError(400, 'INVALID_ADDRESS', 'Address does not belong to the customer');
     }
   }
@@ -49,42 +49,42 @@ async function createOrder(customerId, { store_id, address_id, items, store_type
   }
 
   let menuItems;
-  if(store_type=="restaurant"){
+  if (store_type == "restaurant") {
     menuItems = await prisma.menuItem.findMany({
       where: { id: { in: itemIds }, restaurantId: store_id },
     });
-  }else if(store_type=="grocery"){
+  } else if (store_type == "grocery") {
     menuItems = await prisma.groceryProduct.findMany({
       where: { id: { in: itemIds }, storeId: store_id },
     });
   }
 
   // Grocery stock & availability validation
-if (store_type === "grocery") {
-  const productMap = Object.fromEntries(
-    menuItems.map(product => [product.id, product])
-  );
+  if (store_type === "grocery") {
+    const productMap = Object.fromEntries(
+      menuItems.map(product => [product.id, product])
+    );
 
-  for (const item of items) {
-    const product = productMap[item.item_id];
+    for (const item of items) {
+      const product = productMap[item.item_id];
 
-    if (!product.isAvailable) {
-      throw new AppError(
-        400,
-        "PRODUCT_UNAVAILABLE",
-        `${product.name} is currently unavailable`
-      );
-    }
+      if (!product.isAvailable) {
+        throw new AppError(
+          400,
+          "PRODUCT_UNAVAILABLE",
+          `${product.name} is currently unavailable`
+        );
+      }
 
-    if (item.quantity > product.stock) {
-      throw new AppError(
-        400,
-        "INSUFFICIENT_STOCK",
-        `Only ${product.stock} unit(s) of ${product.name} are available`
-      );
+      if (item.quantity > product.stock) {
+        throw new AppError(
+          400,
+          "INSUFFICIENT_STOCK",
+          `Only ${product.stock} unit(s) of ${product.name} are available`
+        );
+      }
     }
   }
-}
 
   // Fetch all requested menu items that belong to the restaurant
 
@@ -111,7 +111,7 @@ if (store_type === "grocery") {
     orderBody.storeId = store_id;
   }
   let itemList = {}
-  if(store_type=="restaurant"){
+  if (store_type == "restaurant") {
     itemList = {
       create: items.map((item) => ({
         menuItemId: item.item_id,
@@ -119,7 +119,7 @@ if (store_type === "grocery") {
         price: priceMap[item.item_id],
       }))
     }
-  }else if(store_type=="grocery"){
+  } else if (store_type == "grocery") {
     itemList = {
       create: items.map((item) => ({
         groceryProductId: item.item_id,
@@ -130,7 +130,7 @@ if (store_type === "grocery") {
   }
 
   const order = await prisma.order.create({
-    data: {...orderBody, items: itemList},
+    data: { ...orderBody, items: itemList },
     include: { items: true },
   });
 
@@ -198,12 +198,12 @@ async function getOrders(customerId, { page = 1, limit = 20, tab, type } = {}) {
   else if (tab === 'past') where.status = { in: PAST_STATUSES };
 
   let orderBody = {}
-  if(type=='restaurant'){
+  if (type == 'restaurant') {
     orderBody.include = {
       items: { include: { menuItem: { select: { name: true, imageUrl: true } } } },
       restaurant: { select: { id: true, name: true, imageUrl: true } },
     }
-  }else if(type=='grocery'){
+  } else if (type == 'grocery') {
     orderBody.include = {
       items: { include: { groceryProduct: { select: { name: true, imageUrl: true } } } },
       store: { select: { id: true, name: true, imageUrl: true } },
@@ -233,13 +233,60 @@ async function getOrders(customerId, { page = 1, limit = 20, tab, type } = {}) {
  * @returns {Promise<Object>} The updated order record.
  * @throws {AppError} 404 if not found, 400 if the transition is invalid based on VALID_TRANSITIONS.
  */
-async function updateOrderStatus(orderId, newStatus, io) {
-  const order = await prisma.order.findUnique({ where: { id: orderId } });
-  if (!order) throw new AppError(404, 'NOT_FOUND', 'Order not found');
+async function updateOrderStatus(orderId, newStatus, user, io) {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: {
+      restaurant: true,
+      store: true,
+      tracking: true,
+    },
+  });
+
+  if (!order) {
+    throw new AppError(
+      404,
+      "NOT_FOUND",
+      "Order not found"
+    );
+  }
+
+  // Restaurant owner can update only their own restaurant orders
+  if (user.role === "restaurant_owner") {
+    if (
+      !order.restaurant ||
+      order.restaurant.ownerId !== user.id
+    ) {
+      throw new AppError(
+        403,
+        "FORBIDDEN",
+        "You are not authorized to update this order"
+      );
+    }
+  }
+
+  // Grocery seller can update only their own grocery orders
+  if (user.role === "seller") {
+    if (
+      !order.store ||
+      order.store.ownerId !== user.id
+    ) {
+      throw new AppError(
+        403,
+        "FORBIDDEN",
+        "You are not authorized to update this order"
+      );
+    }
+  }
 
   const allowed = VALID_TRANSITIONS[order.status] || [];
+
   if (!allowed.includes(newStatus)) {
-    throw new AppError(400, 'INVALID_TRANSITION', `Cannot transition from ${order.status} to ${newStatus}`);
+    throw new AppError(
+      400,
+      "INVALID_TRANSITION",
+      `Cannot transition from ${order.status} to ${newStatus}`
+    );
   }
 
   const updated = await prisma.order.update({
@@ -248,14 +295,13 @@ async function updateOrderStatus(orderId, newStatus, io) {
   });
 
   if (io) {
-    io.to(`user:${order.userId}`).emit('order_status_update', {
+    io.to(`user:${order.userId}`).emit("order_status_update", {
       order_id: orderId,
       status: newStatus,
     });
 
-    // Broadcast to all delivery agents when order is confirmed and ready for pickup
     if (newStatus === ORDER_STATUS.CONFIRMED) {
-      io.to('delivery_agents').emit('new_delivery_request', {
+      io.to("delivery_agents").emit("new_delivery_request", {
         order_id: orderId,
         status: newStatus,
       });
@@ -264,7 +310,6 @@ async function updateOrderStatus(orderId, newStatus, io) {
 
   return updated;
 }
-
 /**
  * Submit a refund or replacement request for a delivered order.
  * Validates the items against the store and sends notifications/socket events to the store owner.
@@ -281,19 +326,116 @@ async function updateOrderStatus(orderId, newStatus, io) {
  * @returns {Promise<Object>} The newly created order request record.
  * @throws {AppError} 400 if the store is closed, items are invalid, or the order isn't delivered yet.
  */
-async function createOrderRequest(orderId, customerId, { type, store_type, reason, image_url, items }, io){
+
+async function getOrderTracking(orderId, user) {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: {
+      tracking: true,
+      restaurant: true,
+      store: true,
+    },
+  });
+
+  if (!order) {
+    throw new AppError(
+      404,
+      "NOT_FOUND",
+      "Order not found"
+    );
+  }
+
+  // Customer can only view their own orders
+  if (user.role === "customer") {
+    if (order.userId !== user.id) {
+      throw new AppError(
+        403,
+        "FORBIDDEN",
+        "You are not authorized to view this order"
+      );
+    }
+  }
+
+  // Restaurant owner can only view their restaurant's orders
+  if (user.role === "restaurant_owner") {
+    if (
+      !order.restaurant ||
+      order.restaurant.ownerId !== user.id
+    ) {
+      throw new AppError(
+        403,
+        "FORBIDDEN",
+        "You are not authorized to view this order"
+      );
+    }
+  }
+
+  // Grocery seller can only view their store's orders
+  if (user.role === "seller") {
+    if (
+      !order.store ||
+      order.store.ownerId !== user.id
+    ) {
+      throw new AppError(
+        403,
+        "FORBIDDEN",
+        "You are not authorized to view this order"
+      );
+    }
+  }
+
+  // Delivery agent can only view assigned orders
+  if (user.role === "delivery") {
+    if (
+      !order.tracking ||
+      order.tracking.agentId !== user.id
+    ) {
+      throw new AppError(
+        403,
+        "FORBIDDEN",
+        "You are not authorized to view this order"
+      );
+    }
+  }
+  return {
+    orderId: order.id,
+    status: order.status,
+    storeType: order.restaurant ? "restaurant" : "grocery",
+    storeName: order.restaurant
+      ? order.restaurant.name
+      : order.store.name,
+    tracking: order.tracking
+      ? {
+        id: order.tracking.id,
+        agentId: order.tracking.agentId,
+        riderName: order.tracking.riderName,
+        riderPhone: order.tracking.riderPhone,
+        currentLat: order.tracking.currentLat,
+        currentLng: order.tracking.currentLng,
+        earnings: order.tracking.earnings,
+        deliveryFee: order.tracking.deliveryFee,
+        distanceKm: order.tracking.distanceKm,
+        estimatedMinutes: order.tracking.estimatedMinutes,
+        completedAt: order.tracking.completedAt,
+        updatedAt: order.tracking.updatedAt,
+      }
+      : null,
+  };
+}
+
+async function createOrderRequest(orderId, customerId, { type, store_type, reason, image_url, items }, io) {
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     include: { items: true }
   });
 
-  if(!order) throw new AppError(404, 'NOT_FOUND', 'Order not found');
+  if (!order) throw new AppError(404, 'NOT_FOUND', 'Order not found');
 
-  if(order.userId !== customerId){
+  if (order.userId !== customerId) {
     throw new AppError(403, 'FORBIDDEN', 'You do not own this order');
   }
 
-  if(order.status !== ORDER_STATUS.DELIVERED){
+  if (order.status !== ORDER_STATUS.DELIVERED) {
     throw new AppError(400, 'INVALID_STATUS', 'Only delivered orders can have refund/replacement requests');
   }
 
@@ -302,12 +444,12 @@ async function createOrderRequest(orderId, customerId, { type, store_type, reaso
   if (store_type === 'restaurant') {
     sellerId = order.restaurantId;
     const restaurant = await prisma.restaurant.findUnique({ where: { id: sellerId } });
-    if(restaurant.isOpen === false) throw new AppError(400, 'RESTAURANT_CLOSED', 'Cannot create order request. The restaurant is closed');
+    if (restaurant.isOpen === false) throw new AppError(400, 'RESTAURANT_CLOSED', 'Cannot create order request. The restaurant is closed');
     ownerId = restaurant.ownerId;
   } else if (store_type === 'grocery') {
     sellerId = order.storeId;
     const store = await prisma.store.findUnique({ where: { id: sellerId } });
-    if(store.isOpen === false) throw new AppError(400, 'STORE_CLOSED', 'Cannot create order request. The store is closed');
+    if (store.isOpen === false) throw new AppError(400, 'STORE_CLOSED', 'Cannot create order request. The store is closed');
     ownerId = store.ownerId;
   }
 
@@ -324,7 +466,7 @@ async function createOrderRequest(orderId, customerId, { type, store_type, reaso
     });
   }
 
-  if(sellerItems.length !== itemIds.length){
+  if (sellerItems.length !== itemIds.length) {
     throw new AppError(400, 'INVALID_ITEMS', 'Invalid request items');
   }
 
@@ -337,7 +479,7 @@ async function createOrderRequest(orderId, customerId, { type, store_type, reaso
   }));
 
   const refundAmount = type === REQUEST_TYPE.REFUND
-    ? replaceOrderItems.reduce((sum,item)=>sum+(item.price*item.quantity),0)
+    ? replaceOrderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
     : null;
 
   const replaceOrderRecord = await prisma.orderRequest.create({
@@ -360,11 +502,11 @@ async function createOrderRequest(orderId, customerId, { type, store_type, reaso
     type: 'order_request'
   }
 
-  await notificationService.createNotification({...notification, userId: ownerId});
+  await notificationService.createNotification({ ...notification, userId: ownerId });
 
-  await notificationService.sendPushNotification({...notification, userId: ownerId});
+  await notificationService.sendPushNotification({ ...notification, userId: ownerId });
 
-  if(io){
+  if (io) {
     io.to(`${store_type}:${sellerId}`).emit('order_request', {
       order_id: orderId,
       request_id: replaceOrderRecord.id,
@@ -377,4 +519,4 @@ async function createOrderRequest(orderId, customerId, { type, store_type, reaso
   return replaceOrderRecord;
 }
 
-module.exports = { createOrder, cancelOrder, getOrders, updateOrderStatus, createOrderRequest };
+module.exports = { createOrder, cancelOrder, getOrders, updateOrderStatus, createOrderRequest, getOrderTracking };

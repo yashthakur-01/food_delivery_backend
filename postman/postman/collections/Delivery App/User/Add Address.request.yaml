@@ -1,8 +1,9 @@
 $kind: http-request
+name: Add Address
 url: "{{base_url}}/api/users/addresses"
 method: POST
 headers:
-  Authorization: Bearer {{supabase_service_role_api_key_0o6r}}
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTdjZGZiMzM2NDUyODM0ZGYyOWM1ZiIsInBob25lIjoiKzkxOTg3NjU0MzIwNCIsImVtYWlsIjoiY3VzdG9tZXJAZ21haWwuY29tIiwicm9sZSI6ImN1c3RvbWVyIiwiaXNfdmVyaWZpZWQiOnRydWUsInRva2VuSWQiOiJmYWQwZGVjNS1kYTU2LTRjNGYtOThlMS01MmU2ZDFlNDc5YWMiLCJpYXQiOjE3ODQzMDQ1NzgsImV4cCI6MTc4NDMwNTQ3OH0.eawg1qrW9RjttYg8LUh6JyYmVBHbZxdofTDtLCecwEk
 body:
   type: json
   content: '{ "address": "456 Park Ave, Mumbai", "lat": 19.0760, "lng": 72.8777 }'

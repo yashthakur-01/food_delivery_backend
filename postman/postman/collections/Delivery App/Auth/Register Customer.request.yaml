@@ -8,13 +8,13 @@ body:
 
     \  \"name\": \"Customer One\",\r
 
-    \  \"phone\": \"+919876543204\",\r
+    \  \"phone\": \"+919876543303\",\r
 
     \  \"password\": \"Password123!\",\r
 
     \  \"role\": \"customer\",\r
 
-    \  \"email\": \"customer@gmail.com\"\r
+    \  \"email\": \"customer1@gmail.com\"\r
 
     }"
 order: 5000

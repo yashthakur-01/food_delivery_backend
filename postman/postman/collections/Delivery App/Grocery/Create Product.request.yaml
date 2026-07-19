@@ -3,12 +3,12 @@ name: Create Product
 url: "{{base_url}}/api/grocery/stores/products"
 method: POST
 headers:
-  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTEwNmQ1ZDUwMWU2Y2YwYzdhZGFmOSIsInBob25lIjoiKzkxOTg3NjU0MzIxMSIsImVtYWlsIjoic2VsbGVyQGV4YW1wbGUuY29tIiwicm9sZSI6InNlbGxlciIsImlzX3ZlcmlmaWVkIjp0cnVlLCJ0b2tlbklkIjoiN2VkZTljZWUtOTI4Ny00MGMzLWI0Y2ItMmQ0ZTQ3Yzc1ZjM2IiwiaWF0IjoxNzg0MTQxMjg4LCJleHAiOjE3ODQxNDIxODh9.yPYhza93fiDWZIBNPQL9DRYPaD8fSbrsW93D_tG6cqA
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNWI5NjA4ZTRjOTgyMzMwNjkzYzY0OSIsInBob25lIjoiKzkxOTg3NjU0MzMwMSIsImVtYWlsIjoiZGFpbHltYXJ0c2VsbGVyQGV4YW1wbGUuY29tIiwicm9sZSI6InNlbGxlciIsImlzX3ZlcmlmaWVkIjp0cnVlLCJ0b2tlbklkIjoiNmYyZDVjODEtOGMzOS00NTUzLWE2MmMtZGU4NWUxZDdlYjY5IiwiaWF0IjoxNzg0NDgxNDI3LCJleHAiOjE3ODQ0ODIzMjd9.ZIV_GBLy0pe28Isy9POymaalbXVRsFLgF2UB_KRFksk
 body:
   type: json
   content: "{\r
 
-    \  \"storeId\": \"6a5106f6d501e6cf0c7adafa\",\r
+    \  \"storeId\": \"6a5b9650e4c982330693c64a\",\r
 
     \  \"name\": \"Amul Milk\",\r
 

@@ -1,11 +1,12 @@
 $kind: http-request
+name: Login Customer
 url: "{{base_url}}/api/auth/login/password"
 method: POST
 body:
   type: json
   content: "{\r
 
-    \  \"identifier\": \"+919876543204\",\r
+    \  \"identifier\": \"+919876543303\",\r
 
     \  \"password\": \"Password123!\",\r
 

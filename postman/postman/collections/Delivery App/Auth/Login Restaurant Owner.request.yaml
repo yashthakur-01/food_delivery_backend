@@ -1,9 +1,10 @@
 $kind: http-request
+name: Login Restaurant Owner
 url: http://localhost:3001/api/auth/login/password
 method: POST
 body:
   type: json
-  content: '{ "identifier": "+919876543201", "password": "Password123!", "role": "restaurant_owner" }'
+  content: '{ "identifier": "+919876543101", "password": "Password123!", "role": "restaurant_owner" }'
 scripts:
   - type: afterResponse
     code: "const res = pm.response.json();\r

@@ -1,6 +1,7 @@
 $kind: http-request
+name: Get Address
 url: "{{base_url}}/api/users/addresses"
 method: GET
 headers:
-  Authorization: Bearer {{supabase_service_role_api_key_0o6r}}
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTdjZGZiMzM2NDUyODM0ZGYyOWM1ZiIsInBob25lIjoiKzkxOTg3NjU0MzIwNCIsImVtYWlsIjoiY3VzdG9tZXJAZ21haWwuY29tIiwicm9sZSI6ImN1c3RvbWVyIiwiaXNfdmVyaWZpZWQiOnRydWUsInRva2VuSWQiOiIyODBlNzBjNy0yMWZiLTRlOWQtOTczYi1jMDIzYWJlMzEzYWUiLCJpYXQiOjE3ODQzODU0ODQsImV4cCI6MTc4NDM4NjM4NH0.aGINrfU9zEIzhZuvU1O1iQEmT_0Mdk_Tn40pIkMlEDo
 order: 4000

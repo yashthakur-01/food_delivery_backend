@@ -3,20 +3,20 @@ name: Create Store Profile
 url: "{{base_url}}/api/grocery/stores/profile"
 method: POST
 headers:
-  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTEwNmQ1ZDUwMWU2Y2YwYzdhZGFmOSIsInBob25lIjoiKzkxOTg3NjU0MzIxMSIsImVtYWlsIjoic2VsbGVyQGV4YW1wbGUuY29tIiwicm9sZSI6InNlbGxlciIsImlzX3ZlcmlmaWVkIjp0cnVlLCJ0b2tlbklkIjoiYjZmYTc0M2UtOGIwOC00NWJkLTljZTUtYzc0OTE3MzkyODRjIiwiaWF0IjoxNzg0MDIzNzkwLCJleHAiOjE3ODQwMjQ2OTB9.2po5f812bMKo5GDI1tJOgg-Nn9r7YuYIOIQrRHAqmhg
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNWI5NjA4ZTRjOTgyMzMwNjkzYzY0OSIsInBob25lIjoiKzkxOTg3NjU0MzMwMSIsImVtYWlsIjoiZGFpbHltYXJ0c2VsbGVyQGV4YW1wbGUuY29tIiwicm9sZSI6InNlbGxlciIsImlzX3ZlcmlmaWVkIjp0cnVlLCJ0b2tlbklkIjoiYzdjOTkzN2MtYjE2MC00Yzk1LWExNzAtZTI4ZTEwOTQ4MWE2IiwiaWF0IjoxNzg0Mzk0MDYzLCJleHAiOjE3ODQzOTQ5NjN9.8ec0O__SgExD_J9XbBqd-myC_KPglFo-gcMO2JuW2h4
 body:
   type: json
   content: "{\r
 
-    \  \"name\": \"Fresh Mart\",\r
+    \  \"name\": \"Daily Mart\",\r
 
     \  \"description\": \"Daily groceries and household essentials\",\r
 
-    \  \"address\": \"Lajpat Nagar, Delhi\",\r
+    \  \"address\": \"Laxmi Nagar, Delhi\",\r
 
-    \  \"email\": \"freshmart@example.com\",\r
+    \  \"email\": \"dailymartseller@example.com\",\r
 
-    \  \"phone\": \"+919876543210\",\r
+    \  \"phone\": \"+919876543301\",\r
 
     \  \"storeType\": \"GROCERY\",\r
 

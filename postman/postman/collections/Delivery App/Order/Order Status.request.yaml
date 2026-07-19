@@ -1,8 +1,9 @@
 $kind: http-request
-url: "{{base_url}}/api/orders/6a4205b4a4411df64a0be0f1/status"
+name: Order Status
+url: "{{base_url}}/api/orders/6a5b956de4c982330693c647/status"
 method: PATCH
 headers:
-  Authorization: Bearer {{supabase_service_role_api_key_030s}}
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNWI5NjA4ZTRjOTgyMzMwNjkzYzY0OSIsInBob25lIjoiKzkxOTg3NjU0MzMwMSIsImVtYWlsIjoiZGFpbHltYXJ0c2VsbGVyQGV4YW1wbGUuY29tIiwicm9sZSI6InNlbGxlciIsImlzX3ZlcmlmaWVkIjp0cnVlLCJ0b2tlbklkIjoiM2ZhNzQxMmYtNmFiOS00YWMwLWFkYTgtMTMyMDc5NzBlNjRkIiwiaWF0IjoxNzg0Mzg3MTA2LCJleHAiOjE3ODQzODgwMDZ9.Rn2366N3RJ_4UWhKnSnTMpFBHzWLbWfspV9qZp9kcVo
   Content-Type: application/json
 body:
   type: json

@@ -1,8 +1,9 @@
 $kind: http-request
+name: Create Restaurant
 url: "{{base_url}}/api/vendor/profile"
 method: PUT
 headers:
-  Authorization: Bearer {{supabase_service_role_api_key_0kvr}}
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNTc4Mzk0Y2QyZmVlODY0OWM3NTY1ZiIsInBob25lIjoiKzkxOTg3NjU0MzIwMSIsImVtYWlsIjoib3duZXJAZ21haWwuY29tIiwicm9sZSI6InJlc3RhdXJhbnRfb3duZXIiLCJpc192ZXJpZmllZCI6dHJ1ZSwidG9rZW5JZCI6IjI1OTIzMGZhLTU5YjYtNDFiYi1hY2U4LTY1MTgwMmMxZWQ2ZCIsImlhdCI6MTc4NDM4MzM4MywiZXhwIjoxNzg0Mzg0MjgzfQ.Y2f8wg2d-46BCNcLfBX4LCo4Lf2s7owKavzapWgeSks
   Content-Type: application/json
 body:
   type: json
