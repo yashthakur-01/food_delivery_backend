@@ -7,6 +7,8 @@ const notificationService = require('../notification/service');
 const REQUEST_STATUS = require('../../common/constants/OrderRequest');
 const REQUEST_TYPE = require("../../common/constants/requestType");
 const { deductStock, restoreStockForOrder } = require('../../common/utils/stockUtils');
+const { restoreStock } = require('../../common/utils/stockUtils');
+const paymentService = require('../payment/service');
 
 const VALID_TRANSITIONS = {
   [ORDER_STATUS.PENDING]: [ORDER_STATUS.CONFIRMED, ORDER_STATUS.CANCELLED],
@@ -519,4 +521,170 @@ async function createOrderRequest(orderId, customerId, { type, store_type, reaso
   return replaceOrderRecord;
 }
 
-module.exports = { createOrder, cancelOrder, getOrders, updateOrderStatus, createOrderRequest, getOrderTracking };
+/**
+ * Unified method to get an order request for an owner.
+ * Verifies ownership for both restaurant and grocery store orders.
+ * @param {string} requestId - The ID of the order request.
+ * @param {string} ownerId - The ID of the logged-in user (owner).
+ * @returns {Promise<Object>} The order request with owner verification.
+ * @throws {AppError} 404 if not found, 403 if unauthorized.
+ */
+async function getOrderRequestForOwner(requestId, ownerId) {
+  const orderRequest = await prisma.orderRequest.findUnique({
+    where: { id: requestId },
+    include: {
+      order: {
+        include: {
+          restaurant: true,
+          store: true,
+          user: {
+            select: { id: true, name: true, phone: true }
+          }
+        }
+      }
+    }
+  });
+
+  if (!orderRequest) {
+    throw new AppError(404, 'NOT_FOUND', 'Order request not found');
+  }
+
+  // Verify ownership: check if owner matches restaurant or store owner
+  const isRestaurantOrder = !!orderRequest.order.restaurant;
+  const isGroceryOrder = !!orderRequest.order.store;
+
+  if (isRestaurantOrder && orderRequest.order.restaurant.ownerId !== ownerId) {
+    throw new AppError(403, 'FORBIDDEN', 'You are not authorized to access this request');
+  }
+
+  if (isGroceryOrder && orderRequest.order.store.ownerId !== ownerId) {
+    throw new AppError(403, 'FORBIDDEN', 'You are not authorized to access this request');
+  }
+
+  return orderRequest;
+}
+
+/**
+ * Unified method to update an order request for an owner.
+ * Handles ACCEPTED (for replacement/refund) and REJECTED statuses for both store types.
+ * @param {string} requestId - The ID of the order request.
+ * @param {string} ownerId - The ID of the logged-in user (owner).
+ * @param {string} status - The new status (ACCEPTED or REJECTED).
+ * @returns {Promise<Object>} The updated order request or new replacement order.
+ * @throws {AppError} Various errors based on validation.
+ */
+async function updateOrderRequestForOwner(requestId, ownerId, status) {
+  const orderRequest = await getOrderRequestForOwner(requestId, ownerId);
+
+  const { order, type, userId, orderId, newItems, oldItems, refundAmount } = orderRequest;
+  const storeType = order.storeId ? 'grocery' : 'restaurant';
+
+  if (status === REQUEST_STATUS.ACCEPTED && type === REQUEST_TYPE.REPLACE) {
+    // Create a new replacement order
+    const storeId = order.storeId || order.restaurantId;
+
+    const newOrder = await createOrder(
+      userId,
+      {
+        store_id: storeId,
+        store_type: storeType,
+        items: newItems.map((item) => ({
+          item_id: item.itemId || item.menuItemId || item.groceryProductId,
+          quantity: item.quantity
+        }))
+      },
+      {
+        addressLine: order.deliveryAddress,
+        latitude: order.deliveryLat,
+        longitude: order.deliveryLng,
+        freeReplacement: true
+      }
+    );
+
+    // Restore stock for replaced items (grocery only)
+    if (storeType === 'grocery' && oldItems) {
+      const itemsToRestore = oldItems
+        .filter((item) => item.groceryProductId)
+        .map((item) => ({
+          item_id: item.groceryProductId,
+          quantity: item.quantity
+        }));
+
+      if (itemsToRestore.length > 0) {
+        await restoreStock(prisma, itemsToRestore);
+      }
+    }
+
+    // Update request status
+    await prisma.orderRequest.update({
+      where: { id: requestId },
+      data: { status: REQUEST_STATUS.ACCEPTED }
+    });
+
+    return newOrder;
+  }
+
+  if (status === REQUEST_STATUS.ACCEPTED && type === REQUEST_TYPE.REFUND) {
+    // Process refund
+    await paymentService.processRefund(orderId, refundAmount);
+
+    // Restore stock for refunded items (grocery only)
+    if (storeType === 'grocery') {
+      const itemsToUse = (newItems && newItems.length > 0) ? newItems : (oldItems || []);
+
+      const itemsToRestore = itemsToUse
+        .filter((item) => item.itemId || item.groceryProductId)
+        .map((item) => ({
+          item_id: item.itemId || item.groceryProductId,
+          quantity: item.quantity
+        }));
+
+      if (itemsToRestore.length > 0) {
+        await restoreStock(prisma, itemsToRestore);
+      }
+    }
+
+    // Update request status
+    return prisma.orderRequest.update({
+      where: { id: requestId },
+      data: { status: REQUEST_STATUS.ACCEPTED }
+    });
+  }
+
+  if (status === REQUEST_STATUS.REJECTED) {
+    // Notify customer of rejection
+    const notificationBody = {
+      title: `${type} Request Rejected`,
+      message: `Your ${type} request for order #${orderId} has been rejected.`,
+      type: 'ORDER_REQUEST_REJECTED'
+    };
+
+    // Add contact info if restaurant
+    if (storeType === 'restaurant' && order.restaurant) {
+      notificationBody.message = `${notificationBody.message} You can contact the restaurant at ${order.restaurant.phone} for more details.`;
+    }
+
+    await notificationService.createNotification({
+      userId,
+      ...notificationBody,
+      isRead: false
+    });
+
+    await notificationService.sendPushNotification({
+      userId,
+      ...notificationBody
+    });
+
+    return prisma.orderRequest.update({
+      where: { id: requestId },
+      data: { status: REQUEST_STATUS.REJECTED }
+    });
+  }
+
+  throw new AppError(400, 'INVALID_STATUS', `Invalid order request status: ${status}`);
+}
+
+module.exports = {
+  createOrder, cancelOrder, getOrders, updateOrderStatus, createOrderRequest, getOrderTracking,
+  getOrderRequestForOwner, updateOrderRequestForOwner
+};

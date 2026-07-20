@@ -87,4 +87,36 @@ async function getOrderTracking(req, res, next) {
   }
 }
 
-module.exports = { createOrder, getOrders, cancelOrder, updateOrderStatus, createOrderRequest, getOrderTracking };
+/** GET /orders/requests/:id - Unified endpoint for restaurant and grocery owners */
+async function getOrderRequestForOwner(req, res, next) {
+  try {
+    const orderRequest = await service.getOrderRequestForOwner(
+      req.params.id,
+      req.user.id
+    );
+
+    return success(res, 'Order request retrieved', orderRequest);
+  } catch (err) {
+    next(err);
+  }
+}
+
+/** PATCH /orders/requests/:id - Unified endpoint for updating order requests */
+async function updateOrderRequestForOwner(req, res, next) {
+  try {
+    const result = await service.updateOrderRequestForOwner(
+      req.params.id,
+      req.user.id,
+      req.body.status
+    );
+
+    return success(res, 'Order request updated', result);
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { 
+  createOrder, getOrders, cancelOrder, updateOrderStatus, createOrderRequest, getOrderTracking,
+  getOrderRequestForOwner, updateOrderRequestForOwner
+};

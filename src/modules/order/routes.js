@@ -31,4 +31,8 @@ router.get(
 // Restaurant owner + seller + delivery agent status updates
 router.patch('/:id/status', authenticate, authorize('restaurant_owner', 'seller', 'delivery'), validate(updateOrderStatusSchema), controller.updateOrderStatus);
 
+// Unified order request endpoints for restaurant owners and sellers
+router.get('/requests/:id', authenticate, authorize('restaurant_owner', 'seller'), controller.getOrderRequestForOwner);
+router.patch('/requests/:id', authenticate, authorize('restaurant_owner', 'seller'), controller.updateOrderRequestForOwner);
+
 module.exports = router;
