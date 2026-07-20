@@ -154,7 +154,7 @@ if (store_type === "grocery") {
  * @throws {AppError} 404 if not found, 403 if unauthorized, 400 if the order is in an uncancellable state.
  */
 async function cancelOrder(orderId, customerId) {
-  const order = await prisma.order.findUnique({ where: { id: orderId } });
+  const order = await prisma.order.findUnique({ where: { id: orderId }, include: { payment: true } });
   if (!order) throw new AppError(404, 'NOT_FOUND', 'Order not found');
   if (order.userId !== customerId) throw new AppError(403, 'FORBIDDEN', 'You do not own this order');
 
@@ -168,6 +168,9 @@ async function cancelOrder(orderId, customerId) {
   if (order.storeId) {
     await restoreStockForOrder(prisma, orderId);
   }
+
+  if (order.payment?.status === 'SUCCESS')
+    throw new AppError(400, 'INVALID_STATUS', 'Paid orders cannot be cancelled');
 
   return prisma.order.update({
     where: { id: orderId },
