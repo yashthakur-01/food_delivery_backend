@@ -107,12 +107,12 @@ async function getDashboard(agentId) {
       avgPerDelivery: totalDeliveries > 0 ? +(earningsTotal / totalDeliveries).toFixed(2) : 0,
     },
     onlineHours: {
-      totalMinutes,
-      totalHours,
+      totalMinutes : totalOnlineMinutes,
+      totalHours:+(totalOnlineMinutes / 60).toFixed(2),
       todayMinutes: todayOnlineMinutes,
       todayHours: +(todayOnlineMinutes / 60).toFixed(2),
-      thisWeekMinutes,
-      thisMonthMinutes,
+      thisWeekMinutes : weekOnlineMinutes,
+      thisMonthMinutes : monthOnlineMinutes,
     },
     activeDelivery: activeTracking,
   };
