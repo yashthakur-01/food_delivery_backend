@@ -46,7 +46,18 @@ async function verifyLoginOtp(req, res, next) {
 /** POST /auth/refresh */
 async function refresh(req, res, next) {
   try {
-    const tokens = await service.refresh({ refreshToken: req.body.refreshToken });
+    const refreshToken = req.body?.refreshToken;
+
+    if (!refreshToken) {
+      throw new AppError(
+        422,
+        "VALIDATION_ERROR",
+        "Refresh token is required"
+      );
+    }
+
+    const tokens = await service.refresh({ refreshToken });
+    
     return success(res, 'Token refreshed', tokens);
   } catch (err) { next(err); }
 }

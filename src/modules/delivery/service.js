@@ -68,6 +68,15 @@ async function getDashboard(agentId) {
   const weekOnlineMinutes = weekSessions.reduce((s, sess) => s + (sess.durationMinutes || 0), 0);
   const monthOnlineMinutes = monthSessions.reduce((s, sess) => s + (sess.durationMinutes || 0), 0);
 
+  // todayOnlineMinutes (onlineHours.today)
+  const todaySessions = sessions.filter(
+    s => s.goOnlineAt >= startOfToday()
+  );
+
+  const todayOnlineMinutes = todaySessions.reduce(
+    (sum, session) => sum + (session.durationMinutes || 0), 0
+  );
+
   // Check if currently online (open session)
   const openSession = await prisma.agentSession.findFirst({
     where: { agentId, goOfflineAt: null },
@@ -98,10 +107,12 @@ async function getDashboard(agentId) {
       avgPerDelivery: totalDeliveries > 0 ? +(earningsTotal / totalDeliveries).toFixed(2) : 0,
     },
     onlineHours: {
-      totalMinutes: totalOnlineMinutes,
-      totalHours: +(totalOnlineMinutes / 60).toFixed(2),
-      thisWeekMinutes: weekOnlineMinutes,
-      thisMonthMinutes: monthOnlineMinutes,
+      totalMinutes,
+      totalHours,
+      todayMinutes: todayOnlineMinutes,
+      todayHours: +(todayOnlineMinutes / 60).toFixed(2),
+      thisWeekMinutes,
+      thisMonthMinutes,
     },
     activeDelivery: activeTracking,
   };
@@ -138,23 +149,23 @@ async function getAvailableOrders({ page = 1, limit = 20 } = {}) {
       skip, take: limit,
       orderBy: { createdAt: 'desc' },
       include: {
-  restaurant: { select: { id: true, name: true, address: true } },
-  store: { select: { id: true, name: true, address: true } },
-  user: { select: { name: true } },
-  items: true,
-},
+        restaurant: { select: { id: true, name: true, address: true } },
+        store: { select: { id: true, name: true, address: true } },
+        user: { select: { name: true } },
+        items: true,
+      },
     }),
     prisma.order.count({ where: { status: ORDER_STATUS.CONFIRMED, tracking: null } }),
   ]);
 
   const enriched = orders.map((o) => ({
-  ...o,
-  customerName: o.user?.name || 'Customer',
-  pickupName: o.restaurant?.name || o.store?.name,
-  pickupAddress: o.restaurant?.address || o.store?.address,
-  itemCount: o.items.length,
-  deliveryFee: DELIVERY_FEE,
-}));
+    ...o,
+    customerName: o.user?.name || 'Customer',
+    pickupName: o.restaurant?.name || o.store?.name,
+    pickupAddress: o.restaurant?.address || o.store?.address,
+    itemCount: o.items.length,
+    deliveryFee: DELIVERY_FEE,
+  }));
 
   return { orders: enriched, total, page, limit };
 }
@@ -166,7 +177,7 @@ async function getActiveDelivery(agentId) {
       order: {
         include: {
           restaurant: { select: { id: true, name: true, address: true } },
-    store: { select: { id: true, name: true, address: true } },
+          store: { select: { id: true, name: true, address: true } },
           user: { select: { name: true } },
           items: { include: { menuItem: { select: { name: true, price: true } } } },
         },
@@ -176,14 +187,14 @@ async function getActiveDelivery(agentId) {
   if (!tracking) return null;
 
   return {
-  ...tracking,
-  customerName: tracking.order.user?.name || 'Customer',
-  customerAddress: tracking.order.deliveryAddress,
-  restaurantAddress:
-    tracking.order.restaurant?.address || tracking.order.store?.address,
-  pickupName:
-    tracking.order.restaurant?.name || tracking.order.store?.name,
-};
+    ...tracking,
+    customerName: tracking.order.user?.name || 'Customer',
+    customerAddress: tracking.order.deliveryAddress,
+    restaurantAddress:
+      tracking.order.restaurant?.address || tracking.order.store?.address,
+    pickupName:
+      tracking.order.restaurant?.name || tracking.order.store?.name,
+  };
 }
 
 async function getDeliveryHistory(agentId, { page = 1, limit = 20 } = {}) {

@@ -48,9 +48,9 @@ async function register({ name, email, phone, password, role }) {
   });
 
   // Auto-verify user on registration (OTP verification disabled)
-  await prisma.user.update({ 
-    where: { id: user.id }, 
-    data: { is_verified: true } 
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { is_verified: true }
   });
 
   // const identifier = email || phone;
@@ -104,7 +104,13 @@ async function _issueTokens(user) {
 
   await redis.set(`refresh:${user.id}:${tokenId}`, 'valid', 'EX', REFRESH_TTL_SECONDS);
 
-  return { accessToken, refreshToken };
+  return {
+    accessToken,
+    refreshToken,
+    userId: user.id,
+    role: user.role,
+    identifier: user.email
+  };
 }
 
 /**
