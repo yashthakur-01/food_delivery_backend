@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const { randomUUID } = require('crypto');
 const prisma = require('../../config/db');
 const redis = require('../../config/redis');
-const AppError = require('../../common/utils/AppError');
+const AppError = require('../../common/utils/apperror');
 const { signAccessToken, signRefreshToken, verifyToken } = require('../../common/utils/jwt');
 const { generateOTP, storeOTP, verifyOTP } = require('../../common/utils/otp');
 
@@ -34,16 +34,18 @@ async function register({ name, email, phone, password, role }) {
   }
 
   const hashed = await bcrypt.hash(password, 10);
+  const data = {
+    name,
+    password: hashed,
+    role,
+    is_verified: false,
+    status: 'active',
+  };
+  if (email) data.email = email;
+  if (phone) data.phone = phone;
+
   const user = await prisma.user.create({
-    data: {
-      name,
-      email: email || null,
-      phone: phone || null,
-      password: hashed,
-      role,
-      is_verified: false,
-      status: 'active',
-    },
+    data,
     select: { id: true, email: true, phone: true, role: true },
   });
 

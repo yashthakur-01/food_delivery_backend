@@ -8,7 +8,8 @@
     "start": "node server.js",
     "test": "jest",
     "prisma:generate": "npx prisma generate",
-    "prisma:push": "npx prisma db push"
+    "prisma:push": "npx prisma db push",
+    "prisma:seed": "npx prisma db seed"
   },
   "keywords": [],
   "author": "",
@@ -35,5 +36,8 @@
     "jest": "^30.3.0",
     "nodemon": "^3.1.14",
     "supertest": "^7.2.2"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }

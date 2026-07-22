@@ -766,6 +766,246 @@ Response `200`:
 
 ---
 
+## 8C — Approve Store
+
+```
+POST {{base_url}}/api/admin/stores/store_id_here/approve
+```
+
+Headers: `Authorization: Bearer {{access_token}}`
+Body: none
+
+Response `200`:
+```json
+{ "success": true, "message": "store approved", "data": { } }
+```
+
+---
+
+## 8D — Dashboard
+
+```
+GET {{base_url}}/api/admin/dashboard
+```
+
+Headers: `Authorization: Bearer {{access_token}}`
+
+Response `200`:
+```json
+{ "success": true, "message": "Admin dashboard retrieved", "data": { } }
+```
+
+---
+
+## 8E — Get Pending Restaurants
+
+```
+GET {{base_url}}/api/admin/pending-approvals/restaurants
+```
+
+Headers: `Authorization: Bearer {{access_token}}`
+
+Response `200`:
+```json
+{ "success": true, "message": "Pending restaurants retrieved", "data": [] }
+```
+
+---
+
+## 8F — Get Pending Delivery Agents
+
+```
+GET {{base_url}}/api/admin/pending-approvals/delivery-agents
+```
+
+Headers: `Authorization: Bearer {{access_token}}`
+
+Response `200`:
+```json
+{ "success": true, "message": "Pending delivery agents retrieved", "data": [] }
+```
+
+---
+
+## 8G — Get Pending Stores
+
+```
+GET {{base_url}}/api/admin/pending-approvals/stores
+```
+
+Headers: `Authorization: Bearer {{access_token}}`
+
+Response `200`:
+```json
+{ "success": true, "message": "Pending stores retrieved", "data": [] }
+```
+
+---
+
+---
+
+# PHASE 9 — USER PROFILE & ACCOUNT (as customer/any user)
+
+> Login as customer or any authenticated user.
+
+---
+
+## 9A — Get Profile
+
+```
+GET {{base_url}}/api/users/me
+```
+
+Headers: `Authorization: Bearer {{access_token}}`
+
+Response `200`:
+```json
+{
+  "success": true,
+  "message": "Profile retrieved",
+  "data": {
+    "id": "...",
+    "name": "...",
+    "email": "...",
+    "phone": "...",
+    "role": "...",
+    "is_verified": true,
+    "walletBalance": 0,
+    "unreadNotifications": 0
+  }
+}
+```
+
+---
+
+## 9B — Update Profile
+
+```
+PATCH {{base_url}}/api/users/me
+```
+
+Headers: `Authorization: Bearer {{access_token}}`
+
+Body:
+```json
+{
+  "name": "New Name",
+  "email": "new@example.com"
+}
+```
+
+Response `200`:
+```json
+{ "success": true, "message": "Profile updated", "data": { } }
+```
+
+---
+
+## 9C — Get Addresses
+
+```
+GET {{base_url}}/api/users/addresses
+```
+
+Headers: `Authorization: Bearer {{access_token}}`
+
+Response `200`:
+```json
+{ "success": true, "message": "Addresses retrieved", "data": [] }
+```
+
+---
+
+## 9D — Delete Address
+
+```
+DELETE {{base_url}}/api/users/addresses/address_id_here
+```
+
+Headers: `Authorization: Bearer {{access_token}}`
+
+Response `200`:
+```json
+{ "success": true, "message": "Address deleted", "data": null }
+```
+
+---
+
+## 9E — Add to Favorites
+
+```
+POST {{base_url}}/api/users/favorites/restaurant_id_here
+```
+
+Headers: `Authorization: Bearer {{access_token}}`
+
+Response `201`:
+```json
+{ "success": true, "message": "Added to favorites", "data": { } }
+```
+
+---
+
+## 9F — Get Favorites
+
+```
+GET {{base_url}}/api/users/favorites
+```
+
+Headers: `Authorization: Bearer {{access_token}}`
+
+Response `200`:
+```json
+{ "success": true, "message": "Favorites retrieved", "data": [] }
+```
+
+---
+
+## 9G — Remove from Favorites
+
+```
+DELETE {{base_url}}/api/users/favorites/restaurant_id_here
+```
+
+Headers: `Authorization: Bearer {{access_token}}`
+
+Response `200`:
+```json
+{ "success": true, "message": "Removed from favorites", "data": null }
+```
+
+---
+
+## 9H — Get Wallet
+
+```
+GET {{base_url}}/api/users/wallet
+```
+
+Headers: `Authorization: Bearer {{access_token}}`
+
+Response `200`:
+```json
+{ "success": true, "message": "Wallet retrieved", "data": { "balance": 0, "transactions": [] } }
+```
+
+---
+
+## 9I — Get Dashboard
+
+```
+GET {{base_url}}/api/users/dashboard
+```
+
+Headers: `Authorization: Bearer {{access_token}}`
+
+Response `200`:
+```json
+{ "success": true, "message": "Customer dashboard retrieved", "data": { } }
+```
+
+---
+
 ---
 
 # SOCKET.IO REAL-TIME

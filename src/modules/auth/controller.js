@@ -8,7 +8,9 @@ async function register(req, res, next) {
   try {
     const user = await service.register(req.body);
     return success(res, 'User registered successfully', user, 201);
-  } catch (err) { next(err); }
+  } catch (err) { 
+    console.error('Error in register controller:', err);
+    next(err); }
 }
 
 /** POST /auth/verify-otp */

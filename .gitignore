@@ -39,3 +39,4 @@ pids/
 # Temporary files
 tmp/
 temp/
+seed.js
